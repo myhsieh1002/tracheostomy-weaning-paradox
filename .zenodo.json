@@ -22,12 +22,5 @@
       "orcid": "0000-0002-5797-3474"
     }
   ],
-  "related_identifiers": [
-    {
-      "identifier": "[TO COMPLETE: manuscript DOI once published]",
-      "relation": "isSupplementTo",
-      "scheme": "doi"
-    }
-  ],
-  "notes": "Requires MATLAB R2025b with the Statistics and Machine Learning Toolbox and the Optimization Toolbox. No network access required. The related manuscript DOI must be added once the article is published."
+  "notes": "Requires MATLAB R2025b with the Statistics and Machine Learning Toolbox and the Optimization Toolbox. No network access required. Once the accompanying article is published, add it as a related identifier (relation: isSupplementTo) via the Zenodo record's Edit form."
 }
