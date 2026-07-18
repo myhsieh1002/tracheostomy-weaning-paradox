@@ -56,7 +56,7 @@ for d = 1:numel(devices)
     set(gca,'YDir','normal'); clim(clim_all);
     colormap(gca, viridisLike());
     xlabel('C_{rs} (L/cmH_2O)'); ylabel('R_{aw,native} (cmH_2O/(L/s))');
-    title(sprintf('%s', strrep(devices{d},'_',' ')));
+    title(viz.deviceLabel(devices{d}));
     xticks(Cvals); yticks(Rvals);
 
     % Annotate each cell so the figure is readable without a colour bar.
@@ -85,7 +85,7 @@ for d = 1:numel(devices)
         plot(Cvals, F.(devices{d})(i,:), '-o', 'Color', shade, ...
             'MarkerSize',3.5, 'MarkerFaceColor',shade, ...
             'HandleVisibility', ternary(i==nR,'on','off'), ...
-            'DisplayName', strrep(devices{d},'_',' '));
+            'DisplayName', viz.deviceLabel(devices{d}));
     end
 end
 xlabel('C_{rs} (L/cmH_2O)  \rightarrow  healthier'); ylabel('f_{device}');

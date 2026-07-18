@@ -74,8 +74,12 @@ plot(cpTrach.cap.t, cpTrach.cap.C, '-', 'Color', c.TRACH, 'LineWidth',1.8, ...
     'DisplayName','C_{max}(t), tracheostomy (spontaneous)');
 plot(cpETT.cap.t, cpETT.cap.C, '-', 'Color', c.ETT, 'LineWidth',1.8, ...
     'DisplayName','C_{max}(t), ETT (sedated)');
-yline(Cfold_TRACH, ':', 'Color', c.TRACH, 'Label','weanable on trach above here', 'FontSize',7);
-yline(Cfold_ETT,   ':', 'Color', c.ETT,   'Label','weanable on ETT above here', 'FontSize',7);
+% HandleVisibility off: these threshold lines are annotated by their own
+% Label and must not leak into the legend as 'data1'/'data2'.
+yline(Cfold_TRACH, ':', 'Color', c.TRACH, 'Label','weanable on trach above here', ...
+    'FontSize',7, 'HandleVisibility','off');
+yline(Cfold_ETT,   ':', 'Color', c.ETT,   'Label','weanable on ETT above here', ...
+    'FontSize',7, 'HandleVisibility','off');
 xlabel('Days'); ylabel('C_{max}(t) (cmH_2O)');
 title('Capacity trajectory vs the weaning threshold');
 legend('Location','east','Box','off','FontSize',7);

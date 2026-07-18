@@ -56,7 +56,7 @@ for m = 1:numel(metrics)
             'VerticalAlignment','bottom', 'FontSize',8);
     end
     xticks(1:height(T));
-    xticklabels(strrep(T.device,'_',' '));
+    xticklabels(cellfun(@viz.deviceLabel, cellstr(T.device), 'UniformOutput', false));
     xtickangle(35);
     ylabel(labels{m});
     ylim([0, max(vals)*1.18]);
