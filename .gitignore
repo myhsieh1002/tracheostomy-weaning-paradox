@@ -1,0 +1,27 @@
+# macOS / iCloud
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# MATLAB
+*.asv
+*.m~
+*.mex*
+*.slxc
+slprj/
+codegen/
+
+# Scratch / probe scripts (regenerated ad hoc, not part of the pipeline)
+probe*.m
+dbg.m
+_*.m
+
+# Local editor state
+.vscode/
+.idea/
+
+# Internal manuscript-preparation notes (not for public release)
+manuscript/journal_targets.md
+manuscript/draft.md

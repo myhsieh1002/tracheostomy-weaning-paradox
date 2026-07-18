@@ -1,0 +1,33 @@
+{
+  "title": "Tracheostomy weaning–survival paradox: four coupled physiological models",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "MIT",
+  "version": "1.0.0",
+  "description": "MATLAB implementation of four coupled low-dimensional models explaining why tracheostomy shortens mechanical ventilation without changing survival: lumped-parameter respiratory mechanics (Model 1), two-compartment CO2 kinetics (Model 1b), a load-capacity saddle-node bifurcation (Model 2), and ventilator-induced diaphragmatic dysfunction capacity dynamics (Model 2b). Fully reproducible via `matlab -batch \"runAll\"`: 121 unit tests, 19 experiments, auto-generated summary documents, and per-parameter evidence grades (docs/CALIBRATION.md). Accompanies the manuscript of the same title.",
+  "keywords": [
+    "tracheostomy",
+    "weaning",
+    "mechanical ventilation",
+    "work of breathing",
+    "respiratory muscle",
+    "mathematical model",
+    "bifurcation",
+    "ventilator-induced diaphragmatic dysfunction"
+  ],
+  "creators": [
+    {
+      "name": "Hsieh, Ming-Yu",
+      "affiliation": "Chung Shan Medical University Hospital, Taichung, Taiwan",
+      "orcid": "0000-0002-5797-3474"
+    }
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "[TO COMPLETE: manuscript DOI once published]",
+      "relation": "isSupplementTo",
+      "scheme": "doi"
+    }
+  ],
+  "notes": "Requires MATLAB R2025b with the Statistics and Machine Learning Toolbox and the Optimization Toolbox. No network access required. The related manuscript DOI must be added once the article is published."
+}

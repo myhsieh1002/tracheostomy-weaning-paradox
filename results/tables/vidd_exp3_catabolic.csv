@@ -1,0 +1,9 @@
+d_mode,scenario,septic,d_disease,C0,C_end
+offset,trach_spontaneous,0,0,80,72.6682327870257
+offset,deep_sedation_controlled,0,0,80,40.1157724208591
+offset,trach_spontaneous,1,0,51.2,72.1684710738882
+offset,deep_sedation_controlled,1,0,51.2,36.3002993756042
+rate,trach_spontaneous,0,0,80,72.6682327870257
+rate,trach_spontaneous,0,0.05,80,57.7519362586279
+rate,trach_spontaneous,0,0.1,80,47.853979200055
+rate,trach_spontaneous,0,0.2,80,35.639376768121

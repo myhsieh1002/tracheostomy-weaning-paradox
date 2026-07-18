@@ -1,0 +1,88 @@
+{
+  "_meta": {
+    "model": "Model 1b - CO2 kinetics / gas exchange: dead space and ventilatory demand",
+    "status": "UNVERIFIED - written while the MATLAB connection was down. Nothing here has been executed.",
+    "units": {
+      "VCO2": "mL/min STPD",
+      "V_A, V_E": "L/min BTPS",
+      "PaCO2, PACO2, PvCO2": "mmHg",
+      "V_D": "mL",
+      "S_body": "mL CO2 / mmHg",
+      "Q": "L/min",
+      "dissociation slope": "mL CO2 / (mL blood * mmHg)"
+    },
+    "key_constant": "PaCO2 = 0.863 * VCO2(mL/min STPD) / V_A(L/min BTPS). The 0.863 carries the STPD->BTPS conversion and the mmHg scaling; it is the reason VCO2 and V_A may be quoted in their conventional (different) conditions without further correction."
+  },
+
+  "_design_notes": {
+    "DEAD_SPACE_IS_NOT_REDEFINED_HERE": "The build spec's section 2.2 writes V_D_total = V_D_physiologic + V_D_apparatus - dV_D_bypassed(device), which treats the bypass term as device-differentiating. It is not: an ETT and a tracheostomy tube both sit tip-in-mid-trachea and bypass the same airway, so that term CANCELS between them (see Model 1, docs/CALIBRATION.md section 1.2). Model 1b therefore calls wob.deadSpace() for the series dead space rather than recomputing it. Spec section 8 demands dV_D be single-sourced with Model 1; enforcing that in code rather than by discipline is the only way it stays true.",
+    "WHAT_1B_ADDS": "Model 1 models series (anatomic + apparatus) dead space only. Model 1b adds the ALVEOLAR dead space produced by V/Q mismatch, which is what V_D/V_T > anatomic actually measures and what rises in lung injury. V_D_alveolar = max(0, VD_VT*V_T - V_D_anatomic).",
+    "H3_REDEFINED": "The spec's H3 (share of ventilatory demand attributable to the dead-space benefit) would, if read as ETT->trach, be measuring the apparatus term and would merely restate Model 1's finding. It is redefined as the CO2-side dilution: how the ventilatory-demand saving is diluted as VCO2 and V_D/V_T rise. That is structurally the analogue of Model 1's f_device dilution on a NEW axis (gas exchange, not mechanics), which is what section 0 of the spec actually asks for.",
+    "THREE_ARM_FRAMING": "H1/H2 compare not-intubated / ETT / trach, because the 72 mL bypass figure is measured against the non-intubated state (Nunn 1959; Chadda 2002) and only becomes meaningful with that arm present. Same structure as Model 1's exp3.",
+    "CLOSES_A_MODEL_1_GAP": "Model 1 currently carries target_VA as a grade-B derivation from the VCO2 proportionality. That is exactly what this model computes. Once verified, co2.requiredVentilation should supply it."
+  },
+
+  "metabolism": {
+    "VCO2_mL_min": { "value": 200, "source": "Resting adult ~200 mL/min STPD. Critical illness 300-400 (Model 1b spec). Grade C - textbook physiology; not independently verified here." },
+    "VCO2_grid": [180, 250, 320, 400]
+  },
+
+  "deadspace": {
+    "VD_VT":      { "value": 0.35, "source": "Physiologic dead-space fraction; normal ~0.3, lung injury 0.5-0.65. Grade C. NOTE: Mohr 2001 (PMID 11706329) measured 0.51+-0.10 in ventilated patients before tracheostomy - i.e. the ICU baseline is already high." },
+    "VD_VT_grid": [0.3, 0.45, 0.6],
+    "_note": "The series (anatomic + apparatus) dead space comes from wob.deadSpace and is NOT duplicated here. VD_VT sets the TOTAL physiologic fraction; the alveolar component is derived as the excess over the series term."
+  },
+
+  "stores": {
+    "_S_body_units_correction": "The build spec gives S_body = 15.0 with no unit. Read as an ABSOLUTE capacitance (mL CO2/mmHg) it is dimensionally implausible: the body time constant would be S_body/(Q*slope*1000) = 15/30 = 0.5 min, contradicting the spec's own section 2.1, which says the body store is large and gives the slow time constant (minutes to hours), and contradicting the known CO2-store kinetics that motivate a two-compartment model at all. 15 is coherent as mL/(kg*mmHg): at 70 kg that is 1050 mL/mmHg and a body time constant of ~35 min, which is the right order. Implemented per-kg. This affects the TRANSIENT only (co2_exp4); every steady-state result (H1-H3) is independent of it.",
+    "S_body_mL_per_kg_per_mmHg": { "value": 15.0, "source": "TODO-verify. Reinterpreted from the spec's bare 15.0 - see _S_body_units_correction. Order-of-magnitude only." },
+    "body_weight_kg": { "value": 70, "source": "Nominal adult. Grade C." },
+    "diss_slope":  { "value": 0.006, "source": "TODO-verify. Linear approximation to the CO2 dissociation curve near physiologic PCO2, mL CO2/(mL blood*mmHg). Sanity check: at Q=5 L/min it gives a venous-arterial PCO2 difference of VCO2/(Q*slope*1000) = 200/30 = 6.7 mmHg, against a physiologic ~6 - so the slope is the right order. The true curve is nonlinear; co2.dissociation exposes an interface for replacing it." },
+    "diss_intercept": { "value": 0.24, "source": "TODO-verify. CO2 content at PCO2 = 0 in the linear approximation. Only the SLOPE enters the venous-arterial difference, so the intercept cancels from every result here; retained for interpretability." },
+    "Q_L_min":     { "value": 5.0,   "source": "Cardiac output. Grade C - nominal adult resting value." },
+    "V_L_lung_mL": { "value": 2500,  "source": "Alveolar gas volume ~ FRC. Grade C. Sets the fast time constant (~35 s) only." }
+  },
+
+  "targets": {
+    "PaCO2_target_mmHg": { "value": 40, "source": "Normocapnia. Grade C." }
+  },
+
+  "pattern": {
+    "V_T_L": 0.45,
+    "RR": 18
+  },
+
+  "constants": {
+    "alveolar_K": 0.863,
+    "_alveolar_K_note": "PaCO2 = K * VCO2 / V_A. Derivation check: VCO2 = 200 mL/min, PaCO2 = 40 mmHg -> V_A = 0.863*200/40 = 4.32 L/min, which is where Model 1's target_VA = 4.2 comes from.",
+    "PB_mmHg": 760,
+    "PH2O_mmHg": 47
+  },
+
+  "arms": {
+    "native": "NATIVE_UPPER_AIRWAY",
+    "ett":    "ETT_7_5",
+    "trach":  "TRACH_8_0"
+  },
+
+  "validation": {
+    "chadda2002": {
+      "_doc": "The only in vivo non-intubated vs tracheostomised comparison. Its PaCO2 result is the key check for this model: dead space fell 74 mL yet PaCO2 did NOT change - because the patients raised V_T instead. A model that predicts a PaCO2 drop at fixed ventilation is answering a question the patient does not pose.",
+      "mouth_breathing":    { "Vd_mL": 230, "V_T_mL": 400, "VE_L_min": null, "PaCO2_change": "unchanged", "VO2_mL_min": 229 },
+      "tracheal_breathing": { "Vd_mL": 156, "V_T_mL": 330, "VE_L_min": null, "PaCO2_change": "reference", "VO2_mL_min": 206 },
+      "source": "Chadda K et al., Intensive Care Med 2002;28(12):1761-7, PMID 12447520 (grade A, primary, in vivo, n=9)",
+      "note": "RR and PaCO2 were unchanged between arms; V_T rose from 330 to 400 mL on mouth breathing. The regulated variable is PaCO2, not V_E."
+    }
+  },
+
+  "sensitivity": {
+    "method": "sobol",
+    "n_samples": 1024,
+    "seed": 42,
+    "vary": {
+      "VCO2_mL_min": [180, 400],
+      "VD_VT":       [0.30, 0.65],
+      "RR":          [12, 36]
+    }
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "_meta": {
+    "model": "Model 1 - Lumped-parameter respiratory mechanics: ETT vs tracheostomy work of breathing",
+    "units": {
+      "K1": "cmH2O/(L/s)",
+      "K2": "cmH2O/(L/s)^2",
+      "C_rs": "L/cmH2O",
+      "R_aw_native": "cmH2O/(L/s)",
+      "inertance": "cmH2O*s^2/L",
+      "volume": "L",
+      "flow": "L/s",
+      "pressure": "cmH2O",
+      "work": "J",
+      "conversion": "1 cmH2O*L = 0.0981 J"
+    },
+    "calibration_status": "CALIBRATED against published bench data - see docs/CALIBRATION.md. Every value carries a 'source' and 'grade' field. Grades: A=directly reported primary, B=derived/interpolated here, X=not found."
+  },
+
+  "_device_notes": {
+    "WHY_TWO_COEFFICIENT_SETS": "The scientific question IS the ETT-vs-tracheostomy contrast, so WITHIN-RIG consistency matters more than the grade of any single number. Guttmann 1993 is the only source measuring both device classes on ONE rig, so it is the primary set: any rig-specific bias (connector, artificial trachea, flow waveform) is common to both arms and cancels from the contrast. Mixing Flevari's ETT with Guttmann's trach would inject a systematic between-rig bias directly into the quantity of interest - the two sources differ by 1.10-1.47x, rising with ID, consistent with Guttmann's swivel connector.",
+    "VALIDATION_OF_THE_CHOICE": "Guttmann-within-rig reproduces his own published check: ETT 8.0 = 6.55 vs TRACH 8.0 = 4.63 cmH2O at 1 L/s, ratio 0.71, against his reported 'trach = 70% of ETT'. The mixed-source pairing gives 0.84 and does not reproduce it.",
+    "DIRECTION_OF_THE_BIAS": "Guttmann-within-rig gives a LARGER ETT-trach gap, hence a larger dL_device and a WIDER rescue window - i.e. it is the choice most FAVOURABLE to tracheostomy. Using it as primary makes the programme's 'the device moves little' conclusion conservative rather than assumed.",
+    "GUTTMANN_NAMING_TRAP": "Guttmann's own published 'K1/K2' are a POWER LAW (dP = K1*flow^K2, K2 a dimensionless exponent ~1.94-2.03), NOT our quadratic coefficients. Same letters, different objects - citing his K2 as a quadratic coefficient would be a straight error. His true Rohrer fits were never published ('coefficient tables based on quadratic approximation are available from the authors on request', p.510). The values in the guttmann set are a REFIT of his published curves over 0.05-1.5 L/s (rms < 0.12 cmH2O, well inside his own 0.5 cmH2O inter-model spread).",
+    "K1_NEAR_ZERO": "In the Guttmann refit K1 is ill-conditioned and lands near zero. This is not a fitting artefact: Guttmann states explicitly (p.510) that 'there is no need for a linear term ... because flow separation and turbulence prevail', and his Rohrer fit was equally good (rms 0.23 vs 0.22). K2 is robust to +-4% across fit ranges. Flevari's authors likewise disclaim their K1 as having 'only mathematical value'.",
+    "length_and_deadspace_mismatch": "Resistance and dead space come from different bench studies with different tubes: Guttmann's ETTs are 30.8-32.3 cm and trachs 9.0-10.5 cm; Davis's dead-space tubes are 34.5 cm ETT and 12 cm trach. Lengths are recorded per their own source. This heterogeneity is a real limitation, documented rather than papered over."
+  },
+
+  "options_coefficient_set": {
+    "_doc": "Which bench source supplies K1/K2. 'guttmann_within_rig' is primary (see WHY_TWO_COEFFICIENT_SETS). 'flevari_ett' substitutes Flevari's directly-reported ETT values and is the sensitivity arm; it leaves the trach unchanged because Flevari measured no trach.",
+    "active": "guttmann_within_rig"
+  },
+
+  "devices": {
+    "ETT_8_0": {
+      "type": "ETT", "ID_mm": 8.0, "Vd_apparatus_mL": 21,
+      "Vd_source": "Davis 1999 PMID 9927132, interpolated 7.0->8.5 (grade B)",
+      "coefficients": {
+        "guttmann_within_rig": { "K1": 0.36, "K2": 6.19, "length_cm": 32.3, "grade": "B", "source": "Guttmann 1993 PMID 8363076, refit of published power-law curve to Rohrer form" },
+        "flevari_ett":         { "K1": 0.83, "K2": 4.65, "length_cm": null, "grade": "A", "source": "Flevari 2011 PMID 21675060, directly reported in our exact form (Portex Blue Line)" }
+      }
+    },
+    "ETT_7_5": {
+      "type": "ETT", "ID_mm": 7.5, "Vd_apparatus_mL": 18,
+      "Vd_source": "Davis 1999 PMID 9927132, interpolated 7.0->8.5 (grade B)",
+      "coefficients": {
+        "guttmann_within_rig": { "K1": 0.30, "K2": 8.09, "length_cm": 31.2, "grade": "B", "source": "Guttmann 1993 PMID 8363076, refit" },
+        "flevari_ett":         { "K1": 0.92, "K2": 6.01, "length_cm": null, "grade": "A", "source": "Flevari 2011 PMID 21675060, directly reported" }
+      }
+    },
+    "ETT_7_0": {
+      "type": "ETT", "ID_mm": 7.0, "Vd_apparatus_mL": 15,
+      "Vd_source": "Davis 1999 PMID 9927132 (grade A, published)",
+      "coefficients": {
+        "guttmann_within_rig": { "K1": 0.10, "K2": 11.01, "length_cm": 30.8, "grade": "B", "source": "Guttmann 1993 PMID 8363076, refit" },
+        "flevari_ett":         { "K1": 0.97, "K2": 9.17,  "length_cm": null, "grade": "A", "source": "Flevari 2011 PMID 21675060, directly reported" }
+      }
+    },
+    "TRACH_8_0": {
+      "type": "TRACH", "ID_mm": 8.0, "Vd_apparatus_mL": 5.5,
+      "Vd_source": "Davis 1999 PMID 9927132, interpolated (grade B)",
+      "coefficients": {
+        "guttmann_within_rig": { "K1": 0.0, "K2": 4.63, "length_cm": 9.0, "grade": "B", "source": "Guttmann 1993 PMID 8363076, refit; K1 clamped to 0 (unconstrained fit gives -0.12, and Guttmann states a linear term is unnecessary)" },
+        "flevari_ett":         { "K1": 0.0, "K2": 4.63, "length_cm": 9.0, "grade": "B", "source": "Unchanged - Flevari measured no tracheostomy tube" }
+      }
+    },
+    "NATIVE_UPPER_AIRWAY": {
+      "type": "NATIVE", "ID_mm": null, "Vd_apparatus_mL": 0, "Vd_bypassed_mL": 0,
+      "Vd_source": "Nothing is bypassed and no apparatus is present: this arm is the intact, non-intubated airway. Full anatomic dead space applies.",
+      "_doc": "PSEUDO-DEVICE representing the natural upper airway, used as the third arm of exp3. It is NOT a tube. It exists because the ETT-vs-trach two-arm comparison is what makes the literature's 72 mL bypass figure look relevant when it is not: that figure is measured against THIS state. Without this arm the model would also silently assume the natural upper airway has zero resistance, which is false and inverts the comparison against Davis 1999 (who found WOB HIGHER extubated than via an ETT).",
+      "coefficients": {
+        "guttmann_within_rig": { "K1": 0.0, "K2": 4.63, "length_cm": null, "grade": "B", "source": "Set equal to the tracheostomy tube's coefficients on the authority of Chadda 2002 PMID 12447520, which measured upper-airway resistance in vivo and reported it 'did not differ from in vitro tracheostomy tube resistance'. That finding is what licenses this substitution, and it is also what makes the mouth-vs-trach difference in Chadda attributable to dead space rather than resistance." },
+        "flevari_ett":         { "K1": 0.0, "K2": 4.63, "length_cm": null, "grade": "B", "source": "Same - Chadda 2002" }
+      }
+    },
+    "TRACH_7_0": {
+      "type": "TRACH", "ID_mm": 7.0, "Vd_apparatus_mL": 5,
+      "Vd_source": "Davis 1999 PMID 9927132 (grade A, published)",
+      "excluded_from_primary": true,
+      "coefficients": {
+        "guttmann_within_rig": { "K1": 0.0, "K2": 7.2, "length_cm": 9.0, "grade": "X", "source": "UNVERIFIED. No published Rohrer coefficients exist for a bare 7.0 tracheostomy tube. EXTRAPOLATED here from Guttmann's trach K1 ~ D^-3.52 trend (r2=0.9999) BEYOND his measured range (his smallest trach is 8.0). Pryor 2016 PMID via Respir Care 61(5):607-14 has a measured 7.0, but its dP scales as flow^3.5-4.0 - which turbulence cannot produce - and it is a double-lumen tube (inner cannula ~3x resistance), not a bare 7.0. Carter 2013 (Anaesthesia) is the best remaining lead; needs institutional access." },
+        "flevari_ett":         { "K1": 0.0, "K2": 7.2, "length_cm": 9.0, "grade": "X", "source": "Same extrapolation - UNVERIFIED" }
+      }
+    }
+  },
+
+  "patient": {
+    "C_rs":                 { "value": 0.05,  "source": "TODO-verify", "note": "normal ~0.05; ARDS 0.02-0.03" },
+    "R_aw_native":          { "value": 3.0,   "source": "TODO-verify", "note": "normal ~1-3; COPD 10-20" },
+    "inertance":            { "value": 0.01,  "source": "TODO-verify", "note": "near-zero by default; RLC when enabled" },
+    "P0":                   { "value": 0.0,   "source": "design",      "note": "PEEP/auto-PEEP offset, reserved" },
+    "Vd_anatomic_mL":       { "value": 150,   "source": "Radford 1955 PMID 13233138 (2.2 mL/kg at ~68 kg). Grade A. Prefer Hart 1963 PMID 31094493 height-based formula if height known." },
+    "Vd_upper_bypassed_mL": { "value": 72,    "source": "Nunn 1959 PMID 13641137 (72+-32 mL, n=6 CADAVERS) corroborated by Chadda 2002 PMID 12447520 (74 mL, n=9 in vivo). Grade A but WEAK - see CALIBRATION.md 1.3. Sensitivity range 40-90. NOTE: this term CANCELS in the ETT-vs-trach contrast (both bypass the same region); it does not drive H3." },
+    "target_VA_L_min":      { "value": 6.47,  "source": "COMPUTED by Model 1b: co2.requiredVentilation at VCO2 = 300 mL/min, PaCO2 = 40 mmHg, via V_A = 0.863*VCO2/PaCO2. Supersedes the earlier grade-B hand derivation of 6.3 (which scaled 4.2 by 300/200 and was 2.7% low). tests/tModel1b.m asserts the two stay in agreement. Grade B->A/B. See CALIBRATION.md 2.4.", "note": "Alveolar ventilation for normocapnia. THIS IS A SEVERITY PARAMETER, NOT A CONSTANT - holding it at the normal 4.32 silently assumes a metabolically normal patient and puts the model's load scale below the observed weaning-failure range. Sobol ranks it the largest single driver of total load (ST = 0.56). See disease_grid.target_VA_L_min." }
+  },
+
+  "pattern": {
+    "V_T_L":    0.45,
+    "RR":       18,
+    "IE_ratio": [1, 2],
+    "waveform": "sinusoidal",
+    "dt_s":     0.001
+  },
+
+  "options": {
+    "use_inertance": false,
+    "mode_B_fix":    "RR",
+    "_mode_B_fix_note": "When solving for target V_A: hold 'RR' fixed and solve V_T, or hold 'V_T' fixed and solve RR."
+  },
+
+  "disease_grid": {
+    "_doc": "Disease severity has THREE axes, not two. The build spec listed only C_rs and R_aw, but metabolic rate belongs here: it sets the ventilation the patient must achieve, and with it the load. Holding target_VA at the normal 4.2 caps the model's load below the observed weaning-failure range (max 13.6 vs Vassilakopoulos's 19.5) and produces a spuriously narrow, mis-sited rescue window.",
+    "C_rs":        [0.02, 0.03, 0.04, 0.05, 0.06],
+    "R_aw_native": [1, 3, 6, 10, 15],
+    "target_VA_L_min": [4.32, 6.47, 8.63],
+    "_target_VA_note": "4.32 / 6.47 / 8.63 are co2.requiredVentilation's V_A at VCO2 = 200 / 300 / 400 mL/min and PaCO2 = 40 (V_A = 0.863*VCO2/PaCO2), i.e. normal / moderately catabolic / severely catabolic. Computed by Model 1b, not estimated. VCO2 range from the Model 1b spec."
+  },
+
+  "chadda2002_validation": {
+    "_doc": "The only in vivo study comparing the NON-INTUBATED state with the tracheostomised state (n=9 neuromuscular, crossover, tube plugged vs open). It is therefore the only direct check on the three-arm structure of exp3, and the only in vivo estimate of dV_D itself. Mohr 2001 and Joseph 2013 compare ETT->trach and bear on the apparatus term only.",
+    "mouth_breathing":   { "Vd_mL": 230, "V_T_mL": 400, "WOB_J_min": 9.1 },
+    "tracheal_breathing":{ "Vd_mL": 156, "V_T_mL": 330, "WOB_J_min": 6.9 },
+    "dVd_mL": 74,
+    "WOB_ratio_mouth_over_trach": 1.32,
+    "source": "Chadda K et al., Intensive Care Med 2002;28(12):1761-7, PMID 12447520 (grade A, primary, in vivo)",
+    "caveat": "n=9, neuromuscular disease with low V_T, not a general ICU cohort. The RATIO is the check, not the absolute values, since our target_VA differs."
+  },
+
+  "load_scale_validation": {
+    "_doc": "The model's load must be able to reach the loads actually measured in weaning patients, or the bifurcation analysis is being run outside the clinically relevant range.",
+    "vassilakopoulos1998": { "Pi_failure_cmH2O": 19.5, "Pi_success_cmH2O": 16.7, "source": "Vassilakopoulos 1998 PMID 9700110; Pi DERIVED as (Pi/Pimax)*Pimax (grade B)" },
+    "normal_resting_Pmus_cmH2O": [5, 10],
+    "source_normal": "Bertoni/Goligher, Crit Care 2020;24:106, PMID 32204729 (secondary/review)"
+  },
+
+  "experiments": {
+    "exp1": { "flow_range_Lps": [0, 1.5], "n_flow": 151 },
+    "exp2": { "devices": ["ETT_8_0", "ETT_7_5", "ETT_7_0", "TRACH_8_0", "TRACH_7_0"] },
+    "exp3": { "devices": ["ETT_7_5", "TRACH_8_0"] },
+    "exp4": { "devices": ["ETT_7_5", "TRACH_8_0"] }
+  },
+
+  "sensitivity": {
+    "method":    "sobol",
+    "n_samples": 1024,
+    "seed":      42,
+    "vary": {
+      "C_rs":                 [0.02, 0.07],
+      "R_aw_native":          [1.0, 15.0],
+      "target_VA_L_min":      [4.2, 8.4],
+      "RR":                   [12, 36],
+      "K1_scale":             [0.5, 1.5],
+      "K2_scale":             [0.5, 1.5],
+      "Vd_upper_bypassed_mL": [40, 90]
+    },
+    "_vary_notes": {
+      "target_VA_L_min": "ADDED. Metabolic rate is a severity axis and the spec omitted it; it turns out to dominate the load scale.",
+      "V_T_L": "REMOVED as a free variable: in Mode B, V_T is SOLVED from target_VA and dead space, so varying it independently would contradict the model.",
+      "RR": "Upper bound raised 30 -> 36; failing weaning patients are tachypnoeic.",
+      "Vd_upper_bypassed_mL": "Narrowed 30-110 -> 40-90, the range the literature actually supports (Nunn 1959 SD; see CALIBRATION.md 1.3). The spec's 110 exceeded any published estimate."
+    }
+  }
+}

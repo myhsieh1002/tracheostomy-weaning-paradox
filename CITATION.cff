@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the article and the archived software."
+title: "Tracheostomy weaning–survival paradox: four coupled physiological models"
+abstract: >-
+  MATLAB implementation of four coupled low-dimensional models explaining why
+  tracheostomy shortens mechanical ventilation without changing survival:
+  lumped-parameter respiratory mechanics (Model 1), two-compartment CO2 kinetics
+  (Model 1b), a load–capacity saddle-node bifurcation (Model 2), and
+  ventilator-induced diaphragmatic dysfunction capacity dynamics (Model 2b).
+  Fully reproducible (matlab -batch "runAll"): 121 unit tests, 19 experiments,
+  auto-generated summaries, per-parameter evidence grades.
+type: software
+version: 1.0.0
+date-released: "2026-07-18"   # TO COMPLETE — set to the Zenodo release date
+license: MIT
+# repository-code: "TO COMPLETE — Zenodo/GitHub URL after deposit"
+# doi: "TO COMPLETE — Zenodo DOI after deposit"
+keywords:
+  - tracheostomy
+  - weaning
+  - mechanical ventilation
+  - work of breathing
+  - respiratory muscle
+  - mathematical model
+  - bifurcation
+  - ventilator-induced diaphragmatic dysfunction
+authors:
+  - family-names: "Hsieh"
+    given-names: "Ming-Yu"
+    orcid: "https://orcid.org/0000-0002-5797-3474"
+    affiliation: "Chung Shan Medical University Hospital, Taichung, Taiwan"

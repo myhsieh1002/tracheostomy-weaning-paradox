@@ -1,0 +1,64 @@
+{
+  "_meta": {
+    "model": "Model 2 - Load-capacity dynamical system: weaning as a saddle-node bifurcation",
+    "state": "C(t) = sustainable inspiratory muscle capacity [cmH2O]; timescale hours-days",
+    "ode": "dC/dt = alpha*(C_max - C) - beta*C*g(L/C),  g(u) = 1/(1+exp(-s*(u - u_crit)))",
+    "units": { "C": "cmH2O", "C_max": "cmH2O", "L": "cmH2O", "u": "dimensionless", "alpha": "1/hr", "beta": "1/hr", "t": "hr" },
+    "calibration_status": "See docs/CALIBRATION.md section 3. u_crit and capacity_grid were CORRECTED against the build spec; alpha is semi-constrained; beta and s have no published value."
+  },
+
+  "dynamics": {
+    "alpha":  { "value": 0.15, "range": [0.1, 0.3], "source": "Laghi 1995 PMID 7592215 - 24h recovery curve. SEMI-CONSTRAINED: recovery is biphasic, model forces single exponential. See CALIBRATION.md 3." },
+    "beta":   { "value": 1.0,  "range": [0.5, 2.0], "source": "TODO-verify - NO published fatigue rate constant exists. Inferred from ~35% capacity fall over an assumed 15-45 min Tlim." },
+    "s":      { "value": 25.0, "range": [10, 50],   "source": "TODO-verify - not addressed in literature. Constrained only indirectly by Tlim > 45 min at u ~ u_crit." },
+    "u_crit": { "value": 0.4,  "range": [0.35, 0.5], "source": "Roussos & Macklem 1977 PMID 893274 - Pdicrit ~0.4 measured as PURE Pdi/Pdimax, no duty-cycle term. CORRECTS the spec's 0.15, which was a TTdi value and is NOT the same quantity. See CALIBRATION.md 1.1." },
+    "noise_sigma": { "value": 0.02, "range": [0.005, 0.1], "source": "design - M2b Euler-Maruyama only" }
+  },
+
+  "capacity_grid": {
+    "C_max": [20, 30, 40, 50, 60, 70],
+    "source": "Vassilakopoulos 1998 PMID 9700110 - MIP 42.3+-12.7 (weaning failure) vs 53.8+-15.1 (success). CORRECTS the spec's [40..80], which omitted the 20-40 band where weaning failure actually lives and included 80, which the weaning population does not reach."
+  },
+
+  "load_from_model1": {
+    "use": "mean",
+    "_use_note": "'mean' = mean INSPIRATORY P_mus, which pairs with u_crit=0.4 (Roussos & Macklem, a pure pressure ratio). 'duty_weighted' reproduces the tension-time index and MUST be paired with u_crit=0.15 (Bellemare & Grassino) instead. 'peak' has NO published threshold and is provided for exploration only. lc.utilisation enforces the pairing.",
+    "devices": ["ETT_7_5", "TRACH_8_0"]
+  },
+
+  "continuation": {
+    "method": "pseudo_arclength",
+    "ds": 0.05,
+    "L_range": [0, 40],
+    "max_steps": 4000,
+    "newton_tol": 1e-10,
+    "newton_max_iter": 50
+  },
+
+  "fixed_points": {
+    "scan_n": 2000,
+    "C_min_frac": 1e-4,
+    "root_tol": 1e-12
+  },
+
+  "validation": {
+    "vassilakopoulos1998": {
+      "failure": { "Pi_cmH2O": 19.5, "Pimax_cmH2O": 42.3, "u": 0.46, "observed": "fail" },
+      "success": { "Pi_cmH2O": 16.7, "Pimax_cmH2O": 53.8, "u": 0.31, "observed": "success" },
+      "source": "Vassilakopoulos 1998 PMID 9700110. Pi values DERIVED as (Pi/Pimax)*Pimax. See CALIBRATION.md 3.1."
+    }
+  },
+
+  "sensitivity": {
+    "method": "sobol",
+    "n_samples": 1024,
+    "seed": 42,
+    "vary": {
+      "alpha":  [0.1, 0.3],
+      "beta":   [0.5, 2.0],
+      "s":      [10, 50],
+      "u_crit": [0.35, 0.5],
+      "C_max":  [20, 70]
+    }
+  }
+}

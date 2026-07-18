@@ -1,0 +1,179 @@
+{
+  "_meta": {
+    "model": "Model 2b - VIDD capacity dynamics: making Model 2's C_max endogenous",
+    "status": "UNVERIFIED pending literature calibration - see _calibration_status",
+    "ode": "dC/dt = k_syn*h(A) - k_deg*g(A)*C - d_disease*C",
+    "units": { "C": "cmH2O (= Model 2's C_max, = MIP)", "t": "days", "k_syn": "cmH2O/day", "k_deg": "1/day", "d_disease": "1/day", "A": "dimensionless 0-1" },
+    "_calibration_status": "TODO - literature pass in progress. Every value below is a spec placeholder until then."
+  },
+
+  "_design_notes": {
+    "THE_LITERATURE_OVERTURNED_THIS_MODEL_S_CORE_HYPOTHESES": "A calibration pass against the VIDD literature contradicted BOTH of the spec's central claims. They are implemented as the data support them, with the spec's versions retained as switchable variants so the contrast is a result rather than a silent choice. See _h3_status and _ushape_status.",
+
+    "_h3_status": "H3 (disease-driven catabolism is an activity-independent drain that no ventilation strategy can rescue) is CONTRADICTED in its strong form. Lecronier 2022 (PMID 35403916, n=92): septic patients' twitch pressure rose +19% (IQR -13 to 61) over a median 4 days while still ventilated, against -7% in non-septic patients (p=0.005). The paper is titled 'Severe but REVERSIBLE impaired diaphragm function in septic mechanically ventilated patients'. Demoule 2013 (PMID 23641946, n=85) independently found sepsis acts as an OFFSET already present at admission (coefficient -3.74 cmH2O) with 'Day 1 and Day 3 Ptr,stim similar' - no measurable decline over 2 days. So the data describe a LOWER STARTING CAPACITY, not an ongoing drain. CAVEAT that keeps H3 alive as untested rather than dead: Lecronier's second measurement was taken at the switch to pressure support, i.e. when activity was restored, so the recovery is confounded with restored A - which is itself evidence FOR the h(A) term. No trial has randomised activity within sepsis strata. Report H3 as UNTESTED and currently unfavoured.",
+
+    "_ushape_status": "The U-shape is supported in CLINICAL OUTCOME and contradicted in DEGRADATION RATE - which is the level this model works at. Goligher 2018 (PMID 28930478, n=191) found a thickening fraction of 15-30% gave the shortest time to liberation, with both tails worse: a real, well-adjusted U, but in time-to-liberation, not in dC/dt. Zambon 2016 (PMID 26992064, n=40) is the only study stratifying ATROPHY RATE by support and reports it MONOTONIC: -7.5%/d (CMV), -5.3% (high PSV), -1.5% (low PSV), +2.3% (spontaneous/CPAP), best at the fully spontaneous end, no upturn. Its own conclusion is 'a linear relationship between ventilator support and diaphragmatic atrophy rate'. Reconciling the two requires assuming high-effort injury shows up as dysfunctional THICKENING rather than thinning (Goligher's own reading, consistent with maximal TF being depressed in both tails in Goligher 2015) - stated in the literature, never quantified. Default g_mode = 'monotonic'; 'ushape' reproduces the spec.",
+
+    "_A_definition_problem": "Under the spec's definition (A=1 = fully spontaneous load) the data put the optimum AT A=1 (Zambon's best category is spontaneous/CPAP), and the U's injury arm lies OUTSIDE [0,1]. Recovering A* ~ 0.2 requires redefining A as TFdi/TFdi_max, which needs a cross-study transfer between Goligher's supine ICU TFdi (rest = 15-30%) and Yamada 2024's seated healthy TFdi_max (~110%, and resting ~50%) - two populations whose 'rest' differs 2-3x. This is a definitional problem in the model, not a data problem. The A_star parameter is retained for the ushape variant and is flagged as underdetermined.",
+
+    "CAPACITY_IS_MIP_AND_THAT_COSTS_SOMETHING": "C is maximal inspiratory pressure, to stay commensurate with Model 2's C_max (Vassilakopoulos MIP 42.3/53.8; u_crit = 0.4 is Pdi/Pdimax). But the VIDD literature that gives rates measures TWITCH PRESSURE (Ptr,stim ~8-10 cmH2O) or ultrasound thickness - not MIP. Ptr,stim and MIP differ ~5x in scale and are not interchangeable. Every rate below is therefore transferred as a FRACTIONAL change, assuming a proportional loss of MIP and twitch pressure. That assumption is declared, not demonstrated. Switching C to Ptr,stim would let Jaber/Demoule/Lecronier/Dres all be used directly but would break commensurability with Model 2, whose fold lives on the MIP scale.",
+
+    "CAPACITY_VS_CSA_IS_NOT_EMPIRICALLY_SUPPORTED": "Force is conventionally proportional to cross-sectional area for isolated muscle, and this model imports that. For the diaphragm in vivo it is weak: Yamada 2024 (n=109 healthy, multivariate-adjusted) found thickness did NOT independently predict MIP - only deep-breathing excursion did (p=0.021). Goligher 2015 found maximal thickening fraction depressed in BOTH the atrophy and hypertrophy groups, i.e. function is non-monotonic in thickness, which no proportional map can represent. The one supporting human data point is Jaber 2010, which measured both in the same study: -32% force at 6 days against CSA 1904 vs 3100 um2 (-39%), ratio 0.82 - consistent with proportionality, not proof. Declared as a first-principles modelling assumption.",
+
+    "WHY_h_IS_MONOTONE_AND_g_CARRIES_THE_SHAPE": "The spec describes h(A) as rising with A but reversing when too high, AND g(A) as U-shaped: that double-encodes the same physiology. With h CONSTANT the equilibrium C* = k_syn*C_max0/(k_syn + k_deg*g(A) + d) already has whatever shape g has. So the shape is g's and needs nothing from h. h is kept MONOTONE - a training effect, which is what it physically is - and h0 = 1 collapses it to a constant. tests/tModel2b.m asserts the shape survives h0 = 1.",
+
+    "TIMESCALE_SEPARATION_IS_MARGINAL": "This model runs in DAYS; Model 2 runs in HOURS (tau = 1/alpha ~ 7 h = 0.28 d). With the calibrated k_deg ~ 0.064/day the capacity tau is ~1-15 d, giving a separation of ~4-50x depending on activity. The quasi-static coupling assumes the fast system equilibrates between capacity steps; vidd.couplingToModel2 measures the ratio and warns below 5x rather than assuming it.",
+
+    "CONNECTS_TO_MODEL_2": "C(t) here IS Model 2's C_max. It is consumed through lc.rescueWindowTrajectory, which already exists and is tested against a synthetic trajectory. This model does NOT reimplement the fold solve - Model 2's spec section 2.5b requires exactly one implementation of it."
+  },
+
+  "modes": {
+    "g_mode": "monotonic",
+    "_g_mode_doc": "'monotonic' = calibrated to Zambon 2016's four measured points, the only data stratifying atrophy rate by support. 'ushape' = the spec's one-sided-power U, supported only at the level of clinical outcome (Goligher 2018), not of degradation rate.",
+    "d_mode": "offset",
+    "_d_mode_doc": "'offset' = sepsis lowers C(0) by sepsis_offset_cmH2O and d_disease is 0, which is what Demoule 2013 measured. 'rate' = the spec's persistent d_disease*C drain, which no human study supports and which Lecronier 2022 contradicts."
+  },
+
+  "capacity": {
+    "C_max0":   { "value": 80,  "source": "Pre-illness capacity (MIP). Healthy adults: men 111+-28, women 88+-18 cmH2O (ATS/ERS). Grade C. 80 is a plausible starting point that decays into the 20-70 band Model 2's grid covers." },
+    "k_deg":    { "value": 0.064, "source": "CALIBRATED: Jaber 2010 PMID 20813887 measured twitch airway pressure (TwPtr, cmH2O - the model's units) falling 32+-6% after 6 days of mechanical ventilation: k = -ln(0.68)/6 = 0.064/day. Corroborated by four independent thickness studies - Schepens 2015 (0.115), Zambon 2016 CMV (0.078), Grosu 2012 (0.062), Francis 2016 (0.048). Range 0.048-0.115. g(0) = 1 by convention, so k_deg IS the complete-disuse rate. Grade A/B (force directly reported; the rate is derived here)." },
+    "k_syn":    { "value": null, "source": "SOLVED by vidd.calibrate from the healthy-baseline constraint. NOT independently identifiable from any published data: Zambon's +2.3%/day and Lecronier's +19%/4d are NET rates and cannot be separated from k_deg*g without a measurement that does not exist. Goligher 2015 explicitly reports NO recovery after extubation ('thickness did not vary over time following extubation'). Summerhill 2008 gives ~15 months for recovery from diaphragm PARALYSIS (~0.002/day) - different pathology, but a sobering bound. Honest uncertainty spans 0.002-0.044/day, a 20x range across two incomparable conditions." },
+    "h0":       { "value": 0.05, "source": "TODO-verify. Synthesis at zero activity, as a fraction of maximal. h(A) = h0 + (1-h0)*A. Small because synthesis appears to require activity: Goligher 2015 found NO regrowth after extubation, and Zambon's only positive rate is at the fully spontaneous end. h0 = 1 collapses h to a constant, which the tests use to show the shape is g's." },
+    "g0":       { "value": 1.0, "source": "design. g is dimensionless with g(0) = 1 by convention, so k_deg carries the units and IS the complete-disuse rate. For g_mode='ushape', g0 is the floor at A_star." },
+
+    "_monotonic_params": "g_mode='monotonic': g(A) = g_min + (1-g_min)*(1-A)^p_mono, with g(0)=1. g_min and p_mono are SOLVED by vidd.calibrate against Zambon 2016's measured points.",
+    "g_min":    { "value": null, "source": "SOLVED from Zambon 2016 (PMID 26992064)." },
+    "p_mono":   { "value": null, "source": "SOLVED from Zambon 2016 (PMID 26992064)." },
+
+    "_ushape_params": "g_mode='ushape' only. Retained to reproduce the spec and to show what changes.",
+    "A_star":   { "value": 0.5, "source": "UNDERDETERMINED. Goligher 2018 (PMID 28930478) gives TFdi 15-30% as optimal for TIME TO LIBERATION, not for dC/dt. Under the spec's own definition (A=1 = fully spontaneous) the data put the optimum at A~1. Recovering A*~0.2 needs A redefined as TFdi/TFdi_max, a cross-study transfer between Goligher's supine ICU TFdi and Yamada 2024's seated healthy TFdi_max (~110%). Grade X." },
+    "a_disuse": { "value": 1.5, "source": "TODO-verify. Partly constrained: Zambon's four ordinal points fit a monotone decreasing limb. Grade X for the U variant." },
+    "a_injury": { "value": 1.5, "source": "UNCONSTRAINED. Orozco-Levi 2001 (PMID 11719318) proves load-induced sarcomere disruption exists in humans (abnormal area fractions 1.3-17.3%, greatest after threshold loading) but gives NO dose-response, NO time course and NO force measurement. It establishes a_injury > 0 and nothing else. Grade X." },
+    "p":        { "value": 2,   "source": "PURE INVENTION. No study has measured the SHAPE of degradation vs effort. Zambon's four ordinal categories are the densest sampling in existence and are consistent with a straight line. Grade X." },
+    "q":        { "value": 2,   "source": "PURE INVENTION. Same. Grade X." }
+  },
+
+  "disease": {
+    "_doc": "d_mode = 'offset' is what the data show; 'rate' is the spec's version and is retained for contrast.",
+    "sepsis_offset_cmH2O": { "value": 3.74, "source": "Demoule 2013 PMID 23641946: sepsis was an independent predictor of low Day-1 twitch pressure, linear regression coefficient -3.74 (SE 1.16, P=0.002). An OFFSET PRESENT AT ADMISSION, not a rate: 'Day 1 and Day 3 Ptr,stim were similar'. Grade A. NOTE: this is on the Ptr,stim scale (~8-10 cmH2O); transferring it to MIP as an absolute cmH2O offset would be wrong. It is applied as a FRACTIONAL reduction of C(0) - see sepsis_offset_fraction." },
+    "sepsis_offset_fraction": { "value": 0.36, "source": "DERIVED: Demoule's -3.74 cmH2O against a non-septic Day-1 Ptr,stim of ~10.4 cmH2O implies a ~36% fractional reduction, transferred to MIP under the declared proportional-loss assumption. Corroborated: Lecronier 2022 septic 6.3 vs non-septic 9.8 cmH2O = 36% lower. Grade B." },
+    "d_disease":      { "value": 0.0, "source": "NOT FOUND as a rate. No human study reports a per-day rate constant for sepsis-driven diaphragm force loss. Demoule found no Day1->Day3 decline; Lecronier found septic patients IMPROVING. Default 0 under d_mode='offset'. Grade X." },
+    "d_disease_grid": [0.0, 0.05, 0.1, 0.2]
+  },
+
+  "strategy": {
+    "A_max": 1.0,
+    "_mapping": "A = A_max * (1 - support_level). support_level 1 = fully controlled ventilation, 0 = unsupported.",
+    "_THE_A_GAP_IS_NOT_MEASURED": "The support_level values below, and hence the A each scenario implies, are NOT anchored to data. A literature search (see validation.sedation_evidence) found that diaphragm activity has NEVER been measured comparing tracheostomy vs ETT patients: the model's A, as a function of airway interface, has no empirical value. What IS supported, at RCT grade, is that tracheostomy reduces SEDATION (TracMan: 5 vs 8 sedation-days; Meng meta WMD -6 d; Nieszkowska before/after -84-92% dose). That is the DIRECTION of the A change, not its magnitude. Crucially, even the sedation data do not reproduce the ETT->trach A doubling assumed here: a 'fraction of day not heavily sedated' proxy gives ETT ~0.71 -> trach ~0.96, a smaller relative change from a higher base. Because the model gives the A-gap ~5x leverage on the capacity effect vs the load effect, the gap is treated as a SENSITIVITY VARIABLE (vidd_exp5), not a calibrated constant. The scenario values are a mid-range choice for illustration.",
+    "scenarios": {
+      "deep_sedation_controlled": { "support_level": 0.9, "label": "deep sedation, controlled ventilation" },
+      "trach_spontaneous":        { "support_level": 0.4, "label": "tracheostomy, spontaneous breathing" },
+      "ett_partial_support":      { "support_level": 0.7, "label": "ETT, partial support" },
+      "unsupported":              { "support_level": 0.0, "label": "unsupported (load injury risk)" }
+    },
+    "A_gap_sweep": [0.0, 0.1, 0.2, 0.3, 0.4],
+    "_A_gap_sweep_doc": "vidd_exp5 sweeps the ETT->trach increase in A from 0 (no capacity effect) to 0.4 (the assumed doubling), against the load-axis effect which is fixed by Model 1. Shows at what A-gap the capacity channel overtakes the load channel, so the reader sees the conclusion's dependence on the one unmeasured number."
+  },
+
+  "sim": {
+    "days": 21,
+    "dt_day": 0.05
+  },
+
+  "coupling": {
+    "_doc": "For the dynamic rescue window (H4 / m2_exp6 / vidd_exp4). Loads come from Model 1 via lc.coupling and are NOT hard-coded.",
+    "devices": ["ETT_7_5", "TRACH_8_0"]
+  },
+
+  "validation": {
+    "jaber2010": {
+      "_doc": "THE PRIMARY ANCHOR. Force, in cmH2O, over days - the model's own state variable and timescale.",
+      "force_loss_fraction": 0.32,
+      "duration_days": 6,
+      "implied_k_per_day": 0.064,
+      "csa_loss_fraction": 0.39,
+      "source": "Jaber S et al., Am J Respir Crit Care Med 2011;183(3):364-71, PMID 20813887. TwPtr -32+-6% after 6 d of MV; fiber CSA 1904+-220 vs 3100+-329 um2. The force-vs-CSA ratio of 0.82 is the only human diaphragm data point bearing on the capacity-proportional-to-CSA assumption.",
+      "grade": "A/B"
+    },
+    "zambon2016": {
+      "_doc": "THE SHAPE ANCHOR - the only study stratifying atrophy RATE by ventilatory support. Its own conclusion is that the relationship is LINEAR in support, i.e. monotonic, with no U.",
+      "modes": ["CMV", "high_PSV", "low_PSV", "spontaneous_CPAP"],
+      "dTdi_pct_per_day": [-7.5, -5.3, -1.5, 2.3],
+      "assigned_A": [0.0, 0.3, 0.6, 1.0],
+      "_assigned_A_warning": "The mode -> A assignment is OURS, not measured. Zambon reports ventilator modes, not activity fractions. Everything that depends on WHERE these points sit on the A axis inherits this. The qualitative finding - that the rate falls monotonically as support is withdrawn, and turns positive at the spontaneous end - does not.",
+      "source": "Zambon M et al., Crit Care Med 2016;44(7):1347-52, PMID 26992064 (n=40, 153 scans).",
+      "grade": "A for the rates, X for the A assignment"
+    },
+    "goligher2018": {
+      "_doc": "The U-shape - but in TIME TO LIBERATION, not in dC/dt. Cited to justify the ushape VARIANT, not the default.",
+      "TFdi_optimal_pct": [15, 30],
+      "outcome": "time to liberation from mechanical ventilation",
+      "source": "Goligher EC et al., Am J Respir Crit Care Med 2018;197(2):204-213, PMID 28930478 (n=191). Decreased thickness: adjusted HR 0.69 (0.54-0.87) per 10% decrease. INCREASED thickness (n=47) also predicted prolonged ventilation: adjusted duration ratio 1.38 (1.00-1.90) - the high-effort arm.",
+      "grade": "A for the outcome U; does not bear on dC/dt"
+    },
+    "lecronier2022": {
+      "_doc": "TWO ROLES. (1) THE H3 CONTRADICTION: septic patients' diaphragm force IMPROVED while ventilated. (2) THE k_syn ANCHOR: two groups, same intervention, different starting points - which makes k_syn identifiable after all.",
+      "septic_Ptr_stim_cmH2O": 6.3,
+      "nonseptic_Ptr_stim_cmH2O": 9.8,
+      "septic_change_pct": 19,
+      "nonseptic_change_pct": -7,
+      "median_days": 4,
+      "p_value": 0.005,
+      "assigned_A_at_second_measurement": 0.6,
+      "_two_point_solve": "Both groups were re-measured AT THE SWITCH TO PRESSURE SUPPORT, i.e. at the same activity level, so they share a C* and a tau. That gives two equations in two unknowns: 1.19*6.3 = C* + (6.3 - C*)*E and 0.93*9.8 = C* + (9.8 - C*)*E, with E = exp(-4/tau). Solving: E = 0.462, tau = 5.18 d, C* = 8.52 cmH2O. This is what makes k_syn identifiable - the literature review's verdict that it is not holds only if a single group is considered.",
+      "_cross_check": "The solve implies a septic starting capacity of 6.3/9.62 = 0.655 of baseline, i.e. a 34.5% offset. Demoule's independent regression coefficient gives 36%. Two different studies, two different methods, agreeing to ~2 percentage points.",
+      "source": "Lecronier M et al., Ann Intensive Care 2022;12(1):34, PMID 35403916 (n=92). Title: 'Severe but reversible impaired diaphragm function in septic mechanically ventilated patients'.",
+      "caveat": "The second measurement was taken at the switch to pressure support - i.e. when activity was restored - so recovery is confounded with restored A. That confound is evidence FOR the h(A) term and AGAINST d_disease dominance. Activity was never randomised, so activity-independence remains untested. The A = 0.6 assignment for 'pressure support' is ours.",
+      "grade": "A for the measurements, B for the two-point solve, X for the A assignment"
+    },
+    "demoule2013": {
+      "_doc": "Sepsis as an OFFSET, not a rate.",
+      "sepsis_coefficient_cmH2O": -3.74,
+      "day1_ptr_stim_median": 8.2,
+      "day1_vs_day3": "similar - no measurable decline over 2 days",
+      "source": "Demoule A et al., Am J Respir Crit Care Med 2013;188(2):213-9, PMID 23641946 (n=85).",
+      "grade": "A"
+    },
+    "levine2008_EXCLUDED": {
+      "_doc": "EXCLUDED FROM THE CALIBRATION, deliberately. Levine establishes that rapid disuse atrophy is real in humans; it cannot fix a rate.",
+      "csa_loss_fraction": [0.53, 0.57],
+      "duration_hours": [18, 69],
+      "implied_k_range": [0.28, 1.07],
+      "reason_excluded": "The 18-69 h window spans a 3.8x range in implied k (0.28-1.07/day), which is 4-17x every other study in the literature. It is a between-group biopsy comparison at a single time point, not a within-subject time course; the cases are brain-dead organ donors (who carry their own catabolic and hormonal storm) and the controls are thoracic surgery patients with 2-3 h of ventilation. Calibrating k_deg from it would have been wrong by an order of magnitude - and was the original plan here until the numbers were checked.",
+      "source": "Levine S et al., N Engl J Med 2008;358:1327-35, PMID 18367735.",
+      "grade": "A for the phenomenon, X for the rate"
+    },
+    "sedation_evidence": {
+      "_doc": "The evidence behind the capacity axis, and the reason the A-gap is a sensitivity variable rather than a constant.",
+      "link1_trach_reduces_sedation": "SUPPORTED at RCT grade. TracMan (Young 2013, PMID 23695482, n=909): 5 vs 8 sedation-days early vs late trach. Meng 2016 meta (9 RCTs, 2040 pts): sedation-duration WMD -5.99 d (95% CI -11.41 to -0.57). Trouillet 2011 (PMID 21403073, RCT n=216): less IV sedation in the trach arm under randomisation. Nieszkowska 2005 (PMID 16276177, before/after n=72): midazolam -84%, fentanyl -92%, heavy-sedation time 7 -> 1 h/day.",
+      "link2_sedation_to_activity": "PLAUSIBLE but UNMEASURED. No study measures diaphragm activity (EAdi/TFdi/effort/P0.1) comparing ETT vs trach. The model's A as a function of airway interface has no empirical value.",
+      "magnitude_verdict": "The 0.3->0.6 doubling is NOT derivable from the sedation data. A 'fraction of day not heavily sedated' proxy gives ETT ~0.71 -> trach ~0.96. The direction is solid; the magnitude is unknown.",
+      "causal_verdict": "Link 1 de-confounded by RCTs (randomisation separates the trach from the decision to wean). Link 2 unmeasured. Overall: direction supported, magnitude unanchored.",
+      "grade": "A for link 1 direction, X for the magnitude of the A-gap"
+    },
+    "schepens2015_form_check": {
+      "_doc": "Independent support for the FIRST-ORDER (exponential) form of the degradation term.",
+      "observed_loss_pct": [9, 20, 26],
+      "at_hours": [24, 48, 72],
+      "exponential_fit_k": 0.115,
+      "exponential_predicts_pct": [10.9, 20.6, 29.2],
+      "source": "Schepens T et al., Crit Care 2015;19:422, PMID 26639081 (n=53).",
+      "dissent": "Hermans 2010 (PMID 20594319, n=10) fit a LOGARITHMIC rather than exponential decline (R=0.69, P=0.038). Underpowered to adjudicate, but a formal conflict worth stating.",
+      "grade": "B"
+    }
+  },
+
+  "sensitivity": {
+    "method": "sobol",
+    "n_samples": 1024,
+    "seed": 42,
+    "vary": {
+      "k_syn":     [0.2, 0.8],
+      "k_deg":     [0.25, 1.0],
+      "A_star":    [0.3, 0.7],
+      "a_disuse":  [0.5, 3.0],
+      "a_injury":  [0.5, 3.0],
+      "d_disease": [0.0, 0.6]
+    }
+  }
+}
