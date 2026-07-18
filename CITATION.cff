@@ -11,10 +11,18 @@ abstract: >-
   auto-generated summaries, per-parameter evidence grades.
 type: software
 version: 1.0.0
-date-released: "2026-07-18"   # TO COMPLETE — set to the Zenodo release date
+date-released: "2026-07-18"
 license: MIT
-# repository-code: "TO COMPLETE — Zenodo/GitHub URL after deposit"
-# doi: "TO COMPLETE — Zenodo DOI after deposit"
+repository-code: "https://github.com/myhsieh1002/tracheostomy-weaning-paradox"
+url: "https://doi.org/10.5281/zenodo.21430090"
+doi: "10.5281/zenodo.21430090"   # concept DOI — always resolves to the latest version
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.21430090"
+    description: "Concept DOI (all versions)"
+  - type: doi
+    value: "10.5281/zenodo.21430091"
+    description: "Version DOI (v1.0.0)"
 keywords:
   - tracheostomy
   - weaning
