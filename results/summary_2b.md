@@ -20,9 +20,9 @@ Both spec versions are retained as switchable modes (`g_mode`, `d_mode`) so the 
 |---|---|---|
 | k_deg | 0.0640 /day | **anchored** — Jaber 2010 (PMID 20813887): twitch pressure −32% at 6 d |
 | g_min, p_mono | 0.000, 1.384 | **solved** — Zambon 2016's atrophy rates by mode |
-| k_syn | 0.2823 /day | **solved** — Lecronier 2022 two-group relaxation |
+| k_syn | 0.3205 /day | **solved** — Lecronier 2022 two-group relaxation |
 
-**Three independent checks land.** Jaber (not used to fit anything but the rate) is reproduced: model 31% loss at 6 d vs measured 32%. The Lecronier two-group solve implies a sepsis offset of 33%, against Demoule's independent 36% — agreeing to 3.0 percentage points. Timescale separation from Model 2 is 14–46×, so the quasi-static coupling holds.
+**Three independent checks land.** Jaber (not used to fit anything but the rate) is reproduced: model 30% loss at 6 d vs measured 32%. The Lecronier two-group solve implies a sepsis offset of 31%, against Demoule's independent 36% — agreeing to 5.1 percentage points. Timescale separation from Model 2 is 14–46×, so the quasi-static coupling holds.
 
 **Levine 2008 was deliberately NOT used** — its 18–69 h window implies a rate 4–17× every other study. It was the obvious anchor and it would have been wrong by an order of magnitude.
 
@@ -33,8 +33,8 @@ The tracheostomy's capacity effect versus its load effect depends entirely on th
 | A-gap | capacity/load ratio | interpretation |
 |---|---|---|
 | ~0.04 | 1.0 | the two channels are equal |
-| 0.10 (small, sedation-plausible) | 2.3× | capacity already comparable-to-larger |
-| 0.30 (the assumed doubling) | 5.4× | the headline "5× larger" figure |
+| 0.10 (small, sedation-plausible) | 2.2× | capacity already comparable-to-larger |
+| 0.30 (the assumed doubling) | 5.0× | the headline "5× larger" figure |
 
 **The robust statement:** the capacity channel overtakes the load channel above an A-gap of only ~0.04, so a large doubling is NOT required for capacity to matter as much as load — any modest, RCT-supported increase in activity suffices. The specific "5×" needs the large end of the gap and should be reported as an upper bound, not a point estimate.
 

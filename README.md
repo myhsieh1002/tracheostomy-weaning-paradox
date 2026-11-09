@@ -203,8 +203,8 @@ Checks, not fits, except the one marked as a calibration target.
 | ΔV_D, non-intubated vs tracheostomised | Chadda 2002 | 74 mL | **66 mL** |
 | WOB ordering extubated > ETT > trach | Davis 1999 | that order | **that order** |
 | dead-space change ETT→trach | Mohr 2001, Joseph 2013 | null | **null** |
-| diaphragm force loss, 6 d controlled MV | Jaber 2010 | −32% | **−31%** |
-| sepsis capacity offset | Lecronier 2022 vs Demoule 2013 | 33% vs 36% (two methods) | **agree to 1.3 pp** |
+| diaphragm force loss, 6 d controlled MV | Jaber 2010 | −32% | **−30%** |
+| sepsis capacity offset | Lecronier 2022 vs Demoule 2013 | 31% vs 36% (two methods) | **agree to 5.1 pp** |
 | weaning discrimination, Pi/Pimax 0.31 vs 0.46 | Vassilakopoulos 1998 | wean / fail | **wean / fail** *(calibration target)* |
 
 ---

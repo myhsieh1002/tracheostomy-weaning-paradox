@@ -28,23 +28,25 @@ function [p, info] = calibrate(cfg, opts)
 %   Lecronier 2022 reports TWO groups re-measured at the same intervention
 %   -- the switch to pressure support -- from different starting points:
 %
-%       septic:     Ptr,stim 6.3 cmH2O, +19% over 4 days
-%       non-septic: Ptr,stim 9.8 cmH2O,  -7% over 4 days
+%       septic:     Ptr,stim 6.3 cmH2O, +19% over a median 4 days
+%       non-septic: Ptr,stim 9.8 cmH2O,  -7% over a median 3 days
 %
 %   Same activity means the same C* and the same tau, so two exponentials
 %   through two points give two equations in two unknowns:
 %
-%       1.19*6.3 = C* + (6.3 - C*)*E
-%       0.93*9.8 = C* + (9.8 - C*)*E,       E = exp(-4/tau)
+%       1.19*6.3 = C* + (6.3 - C*)*exp(-4/tau)
+%       0.93*9.8 = C* + (9.8 - C*)*exp(-3/tau)
 %
-%   Subtracting eliminates C*: E = 0.462, tau = 5.18 d, C* = 8.52 cmH2O.
+%   The intervals differ (Lecronier's abstract: 4 (2-6) vs 3 (2-4) days),
+%   so C* cannot be eliminated by subtraction; tau is found by a 1-D root
+%   solve: tau = 4.61 d, C* = 8.36 cmH2O. (Versions <= 1.0.0 used 4 days
+%   for both groups, giving tau = 5.18 d, C* = 8.52 cmH2O.)
 %   With tau = 1/(syn + loss) and loss = k_deg*g(A_PS) already known, syn
 %   follows, and k_syn = syn/h(A_PS).
 %
-%   The solve pays for itself twice: it also implies a septic starting
-%   capacity of 65.5% of baseline -- a 34.5% offset -- against the 36% that
-%   Demoule's independent regression coefficient gives. Two studies, two
-%   methods, agreeing to two percentage points.
+%   The solve also implies how far below baseline the septic patients
+%   started, which can be set against the offset that Demoule's independent
+%   regression coefficient gives (36%). The two are reported, not forced.
 %
 %   WHY LEVINE IS NOT USED, HAVING BEEN THE OBVIOUS CHOICE
 %   -----------------------------------------------------
@@ -147,20 +149,41 @@ C0s = L.septic_Ptr_stim_cmH2O;
 C0n = L.nonseptic_Ptr_stim_cmH2O;
 Rs  = 1 + L.septic_change_pct/100;
 Rn  = 1 + L.nonseptic_change_pct/100;
-tL  = L.median_days;
-
-% Both groups share C* and tau at the same activity, so subtracting the two
-% exponentials eliminates C*:
-%   Rs*C0s = C* + (C0s - C*)*E ;  Rn*C0n = C* + (C0n - C*)*E
-%   => (Rs*C0s - Rn*C0n) = E*(C0s - C0n)  ... after cancelling C*(1-E)
-E = (Rs*C0s - Rn*C0n) / (C0s - C0n);
-if ~(E > 0 && E < 1)
-    error('vidd:calibrate:lecronierInfeasible', ...
-        ['Lecronier two-point solve gives E = %.3f, outside (0,1): the two groups cannot be ' ...
-         'described by one exponential relaxing to one C*.'], E);
+tLs = L.median_days;                       % septic interval
+tLn = tLs;                                 % non-septic interval
+if isfield(L, 'nonseptic_median_days') && ~isempty(L.nonseptic_median_days)
+    tLn = L.nonseptic_median_days;
 end
-tau_PS  = -tL / log(E);
-Cstar_PS = (Rs*C0s - C0s*E) / (1 - E);
+
+% Both groups share C* and tau at the same activity:
+%   Rs*C0s = C* + (C0s - C*)*exp(-tLs/tau)
+%   Rn*C0n = C* + (C0n - C*)*exp(-tLn/tau)
+% The septic equation gives C*(tau); the non-septic one fixes tau. With
+% equal intervals this reduces to the closed form E = (Rs*C0s-Rn*C0n)/(C0s-C0n).
+cstarOf = @(tau) (Rs*C0s - C0s*exp(-tLs/tau)) ./ (1 - exp(-tLs/tau));
+resid   = @(tau) cstarOf(tau) + (C0n - cstarOf(tau)).*exp(-tLn/tau) - Rn*C0n;
+if tLs == tLn
+    E = (Rs*C0s - Rn*C0n) / (C0s - C0n);
+    feasible = E > 0 && E < 1;
+    if feasible, tau_PS = -tLs / log(E); end
+else
+    tauGrid = logspace(-1, 3, 400);
+    rv = arrayfun(resid, tauGrid);
+    k = find(sign(rv(1:end-1)) ~= sign(rv(2:end)), 1);
+    feasible = ~isempty(k);
+    if feasible
+        tau_PS = fzero(resid, tauGrid([k k+1]));
+        E = exp(-tLs / tau_PS);
+    else
+        E = NaN;
+    end
+end
+if ~feasible
+    error('vidd:calibrate:lecronierInfeasible', ...
+        ['Lecronier two-point solve has no root with tau > 0: the two groups cannot be ' ...
+         'described by one exponential relaxing to one C*.']);
+end
+Cstar_PS = cstarOf(tau_PS);
 
 % tau = 1/(syn + loss) with loss = k_deg*g(A_PS) already known.
 totalRate = 1 / tau_PS;
@@ -180,7 +203,8 @@ p.k_syn = syn_PS / vidd.synthesis(A_PS, p);
 % started. C*/C_max0 = syn/(syn+loss), so C_max0 on Lecronier's scale is
 % Cstar_PS/(syn/(syn+loss)).
 C_max0_implied = Cstar_PS * totalRate / syn_PS;
-info.lecronier_E              = E;
+info.lecronier_E              = E;          % exp(-septic interval/tau)
+info.lecronier_intervals_days = [tLs tLn];
 info.lecronier_tau_days       = tau_PS;
 info.lecronier_Cstar          = Cstar_PS;
 info.lecronier_C_max0_implied = C_max0_implied;
