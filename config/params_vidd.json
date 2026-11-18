@@ -22,7 +22,7 @@
 
     "WHY_h_IS_MONOTONE_AND_g_CARRIES_THE_SHAPE": "The spec describes h(A) as rising with A but reversing when too high, AND g(A) as U-shaped: that double-encodes the same physiology. With h CONSTANT the equilibrium C* = k_syn*C_max0/(k_syn + k_deg*g(A) + d) already has whatever shape g has. So the shape is g's and needs nothing from h. h is kept MONOTONE - a training effect, which is what it physically is - and h0 = 1 collapses it to a constant. tests/tModel2b.m asserts the shape survives h0 = 1.",
 
-    "TIMESCALE_SEPARATION_IS_MARGINAL": "This model runs in DAYS; Model 2 runs in HOURS (tau = 1/alpha ~ 7 h = 0.28 d). With the calibrated k_deg ~ 0.064/day the capacity tau is ~1-15 d, giving a separation of ~4-50x depending on activity. The quasi-static coupling assumes the fast system equilibrates between capacity steps; vidd.couplingToModel2 measures the ratio and warns below 5x rather than assuming it.",
+    "TIMESCALE_SEPARATION_IS_MARGINAL": "This model runs in DAYS; Model 2 runs in HOURS (tau = 1/alpha ~ 7 h = 0.28 d). With the calibrated k_deg ~ 0.070/day the capacity tau is ~1-15 d, giving a separation of ~4-50x depending on activity. The quasi-static coupling assumes the fast system equilibrates between capacity steps; vidd.couplingToModel2 measures the ratio and warns below 5x rather than assuming it.",
 
     "CONNECTS_TO_MODEL_2": "C(t) here IS Model 2's C_max. It is consumed through lc.rescueWindowTrajectory, which already exists and is tested against a synthetic trajectory. This model does NOT reimplement the fold solve - Model 2's spec section 2.5b requires exactly one implementation of it."
   },
@@ -36,7 +36,7 @@
 
   "capacity": {
     "C_max0":   { "value": 80,  "source": "Pre-illness capacity (MIP). Healthy adults: men 111+-28, women 88+-18 cmH2O (ATS/ERS). Grade C. 80 is a plausible starting point that decays into the 20-70 band Model 2's grid covers." },
-    "k_deg":    { "value": 0.064, "source": "CALIBRATED: Jaber 2010 PMID 20813887 measured twitch airway pressure (TwPtr, cmH2O - the model's units) falling 32+-6% after 6 days of mechanical ventilation: k = -ln(0.68)/6 = 0.064/day. Corroborated by four independent thickness studies - Schepens 2015 (0.115), Zambon 2016 CMV (0.078), Grosu 2012 (0.062), Francis 2016 (0.048). Range 0.048-0.115. g(0) = 1 by convention, so k_deg IS the complete-disuse rate. Grade A/B (force directly reported; the rate is derived here)." },
+    "k_deg":    { "value": 0.0701, "source": "CALIBRATED: Jaber 2010 PMID 20813887 measured twitch airway pressure (TwPtr, cmH2O - the model's units) falling 32+-6% after 5-6 days of mechanical ventilation, with the baseline taken a mean 12.5 h after intubation, so the interval is ~5.5 d: k = -ln(0.68)/5.5 = 0.0701/day (5 d -> 0.0771, 6 d -> 0.0643, reported as sensitivity; versions <= 1.0.0 used 6 d, corrected 2026-11-18). Corroborated by four independent thickness studies - Schepens 2015 (0.115), Zambon 2016 CMV (0.078), Grosu 2012 (0.062), Francis 2016 (0.048). Range 0.048-0.115. g(0) = 1 by convention, so k_deg IS the complete-disuse rate. Grade A/B (force directly reported; the rate is derived here)." },
     "k_syn":    { "value": null, "source": "SOLVED by vidd.calibrate from the healthy-baseline constraint. NOT independently identifiable from any published data: Zambon's +2.3%/day and Lecronier's +19%/4d are NET rates and cannot be separated from k_deg*g without a measurement that does not exist. Goligher 2015 explicitly reports NO recovery after extubation ('thickness did not vary over time following extubation'). Summerhill 2008 gives ~15 months for recovery from diaphragm PARALYSIS (~0.002/day) - different pathology, but a sobering bound. Honest uncertainty spans 0.002-0.044/day, a 20x range across two incomparable conditions." },
     "h0":       { "value": 0.05, "source": "TODO-verify. Synthesis at zero activity, as a fraction of maximal. h(A) = h0 + (1-h0)*A. Small because synthesis appears to require activity: Goligher 2015 found NO regrowth after extubation, and Zambon's only positive rate is at the fully spontaneous end. h0 = 1 collapses h to a constant, which the tests use to show the shape is g's." },
     "g0":       { "value": 1.0, "source": "design. g is dimensionless with g(0) = 1 by convention, so k_deg carries the units and IS the complete-disuse rate. For g_mode='ushape', g0 is the floor at A_star." },
@@ -56,9 +56,11 @@
   "disease": {
     "_doc": "d_mode = 'offset' is what the data show; 'rate' is the spec's version and is retained for contrast.",
     "sepsis_offset_cmH2O": { "value": 3.74, "source": "Demoule 2013 PMID 23641946: sepsis was an independent predictor of low Day-1 twitch pressure, linear regression coefficient -3.74 (SE 1.16, P=0.002). An OFFSET PRESENT AT ADMISSION, not a rate: 'Day 1 and Day 3 Ptr,stim were similar'. Grade A. NOTE: this is on the Ptr,stim scale (~8-10 cmH2O); transferring it to MIP as an absolute cmH2O offset would be wrong. It is applied as a FRACTIONAL reduction of C(0) - see sepsis_offset_fraction." },
-    "sepsis_offset_fraction": { "value": 0.36, "source": "DERIVED: Demoule's -3.74 cmH2O against a non-septic Day-1 Ptr,stim of ~10.4 cmH2O implies a ~36% fractional reduction, transferred to MIP under the declared proportional-loss assumption. Corroborated: Lecronier 2022 septic 6.3 vs non-septic 9.8 cmH2O = 36% lower. Grade B." },
+    "sepsis_offset_fraction": { "value": 0.33, "source": "DERIVED from Demoule 2013 alone (n=85; 52 septic, 61%). Demoule reports the whole-population Day-1 Ptr,stim (mean 10.0+-5.6, median 8.2 cmH2O) and the sepsis regression coefficient (univariate -4.13, multivariable -3.74), not a non-septic mean. Because an unadjusted coefficient is a raw difference in means, the whole-population mean decomposes exactly: non-septic mean = 10.0 + 0.61*4.13 = 12.5 cmH2O, so the septic offset is 4.13/12.5 = 33%. Transferred to MIP under the declared proportional-loss assumption. Alternatives reported as sensitivity (0.30-0.36): multivariable -3.74 with the mean gives 30%; the versions <= 1.0.0 value 0.36 came from a ~10.4 cmH2O reference (median 8.2 + 0.61*3.74) that mixes a median with a difference in means. Lecronier 2022 (septic 6.3 vs non-septic 9.8, 36% lower) is NOT used here, so that the Lecronier two-point solve remains an independent comparison. PI decision 2026-11-18. Grade B." },
     "d_disease":      { "value": 0.0, "source": "NOT FOUND as a rate. No human study reports a per-day rate constant for sepsis-driven diaphragm force loss. Demoule found no Day1->Day3 decline; Lecronier found septic patients IMPROVING. Default 0 under d_mode='offset'. Grade X." },
-    "d_disease_grid": [0.0, 0.05, 0.1, 0.2]
+    "d_disease_grid": [0.0, 0.05, 0.1, 0.2],
+    "sepsis_offset_sensitivity": [0.30, 0.33, 0.36],
+    "_sepsis_offset_sensitivity_doc": "Range of traceable reconstructions of Demoule 2013's non-septic reference (see sepsis_offset_fraction). Reported by vidd_exp6; does not enter the equilibria."
   },
 
   "strategy": {
@@ -89,8 +91,10 @@
     "jaber2010": {
       "_doc": "THE PRIMARY ANCHOR. Force, in cmH2O, over days - the model's own state variable and timescale.",
       "force_loss_fraction": 0.32,
-      "duration_days": 6,
-      "implied_k_per_day": 0.064,
+      "duration_days": 5.5,
+      "duration_days_sensitivity": [5, 6],
+      "_duration_doc": "Jaber reports the loss at 5-6 days of MV, with the baseline measured a mean 12.5 h after intubation: ~5.5 d between measurements. Versions <= 1.0.0 used 6 d.",
+      "implied_k_per_day": 0.0701,
       "csa_loss_fraction": 0.39,
       "source": "Jaber S et al., Am J Respir Crit Care Med 2011;183(3):364-71, PMID 20813887. TwPtr -32+-6% after 6 d of MV; fiber CSA 1904+-220 vs 3100+-329 um2. The force-vs-CSA ratio of 0.82 is the only human diaphragm data point bearing on the capacity-proportional-to-CSA assumption.",
       "grade": "A/B"
@@ -123,7 +127,7 @@
       "p_value": 0.005,
       "assigned_A_at_second_measurement": 0.6,
       "_two_point_solve": "Both groups were re-measured AT THE SWITCH TO PRESSURE SUPPORT, i.e. at the same activity level, so they share a C* and a tau. That gives two equations in two unknowns: 1.19*6.3 = C* + (6.3 - C*)*exp(-4/tau) and 0.93*9.8 = C* + (9.8 - C*)*exp(-3/tau), using each group's own median interval. A 1-D root solve gives tau = 4.61 d, C* = 8.36 cmH2O (v1.0.0, which used 4 d for both, gave tau = 5.18 d, C* = 8.52). This is what makes k_syn identifiable - the literature review's verdict that it is not holds only if a single group is considered.",
-      "_cross_check": "The solve implies a septic starting offset (reported by vidd.calibrate as info.lecronier_septic_offset) that can be set against Demoule's independent regression coefficient (36%). Two different studies, two different methods; the gap is reported in results/summary_2b.md, not forced.",
+      "_cross_check": "The solve implies a septic starting offset (reported by vidd.calibrate as info.lecronier_septic_offset) that can be set against Demoule's independent regression coefficient (33%, reconstructed; 0.30-0.36). Two different studies, two different methods; the gap is reported in results/summary_2b.md, not forced.",
       "source": "Lecronier M et al., Ann Intensive Care 2022;12(1):34, PMID 35403916 (n=92). Title: 'Severe but reversible impaired diaphragm function in septic mechanically ventilated patients'.",
       "caveat": "The second measurement was taken at the switch to pressure support - i.e. when activity was restored - so recovery is confounded with restored A. That confound is evidence FOR the h(A) term and AGAINST d_disease dominance. Activity was never randomised, so activity-independence remains untested. The A = 0.6 assignment for 'pressure support' is ours.",
       "grade": "A for the measurements, B for the two-point solve, X for the A assignment"

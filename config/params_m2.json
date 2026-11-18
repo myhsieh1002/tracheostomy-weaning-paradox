@@ -43,9 +43,9 @@
 
   "validation": {
     "vassilakopoulos1998": {
-      "failure": { "Pi_cmH2O": 19.5, "Pimax_cmH2O": 42.3, "u": 0.46, "observed": "fail" },
-      "success": { "Pi_cmH2O": 16.7, "Pimax_cmH2O": 53.8, "u": 0.31, "observed": "success" },
-      "source": "Vassilakopoulos 1998 PMID 9700110. Pi values DERIVED as (Pi/Pimax)*Pimax. See CALIBRATION.md 3.1."
+      "failure": { "Pi_cmH2O": 22.3, "Pimax_cmH2O": 48.4, "MIP_cmH2O": 42.3, "u": 0.46, "observed": "fail" },
+      "success": { "Pi_cmH2O": 17.9, "Pimax_cmH2O": 57.6, "MIP_cmH2O": 53.8, "u": 0.31, "observed": "success" },
+      "source": "Vassilakopoulos 1998 PMID 9700110, Table 4. The paper defines Pimax = MIP + PEEPi; u = Pi/Pimax is as reported and is all the calibration uses. Pi values DERIVED as u*Pimax. MIP is kept separately because Model 2 capacity C_max is MIP. Versions <= 1.0.0 used MIP as Pimax (Pi 19.5/16.7); corrected 2026-11-18. See CALIBRATION.md 3.1."
     }
   },
 

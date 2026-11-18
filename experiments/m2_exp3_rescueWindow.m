@@ -19,7 +19,7 @@ function T = m2_exp3_rescueWindow(cfg1, cfg2)
 %   2. Metabolic rate, which the spec did not treat as a severity axis at
 %      all, dominates where the window sits. At a normal V_A of 4.2 L/min
 %      the model cannot even reach the loads measured in failing weaning
-%      patients (max 13.6 vs Vassilakopoulos's 19.5 cmH2O), and the window
+%      patients (max 13.6 vs Vassilakopoulos's 22.3 cmH2O), and the window
 %      falls below the observed MIP range entirely -- a spurious "the device
 %      never matters" result that is an artefact of assuming normal
 %      metabolism. Only at V_A ~ 8.4 (VCO2 ~ 400 mL/min, severe catabolism)

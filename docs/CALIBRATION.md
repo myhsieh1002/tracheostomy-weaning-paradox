@@ -132,14 +132,18 @@ tabulated in Pierson 2005 Table 2. Direct internal-volume measurement.
 | Device | Volume (mL) | Grade | Note |
 |---|---|---|---|
 | ETT ID 7.0, 34.5 cm | 15 | A | published |
-| ETT ID 7.5 | ~18 | B | interpolated 7.0→8.5 |
-| ETT ID 8.0 | ~21 | B | interpolated 7.0→8.5 |
+| ETT ID 7.5 | ~16.5 | B | interpolated 7.0→8.0 (measured) |
+| ETT ID 8.0 | 18 | A | measured, Davis Table 3 |
 | ETT ID 8.5, 36.5 cm | 24 | A | published |
 | Trach ID 7.0, 12 cm | 5 | A | published |
 | Trach ID 8.0 | ~5.5 | B | interpolated 7.0→8.5 |
 | Trach ID 8.5, 12 cm | 6 | A | published |
 
-Only ID 7.0 and 8.5 are published; 7.5 and 8.0 are interpolated here.
+Pierson 2005's tabulation lists only ID 7.0 and 8.5, but Davis's own Table 3
+also reports a **measured** ETT 8.0 (18 mL). Versions ≤ 1.0.0 interpolated 8.0
+(21 mL) and 7.5 (18 mL) from the tabulation; corrected 2026-11-18 to the
+measured 8.0 and a 7.0→8.0 interpolation for 7.5. Trach 8.0 remains
+interpolated.
 Manufacturer datasheets publish ID/OD/length but **not** internal volume.
 
 ⚠️ **Length consistency:** Davis measured *uncut* tubes (ETT 34.5 cm). The
@@ -218,8 +222,21 @@ does report a measured 7.0, but its ΔP scales as V̇^3.5–4.0, which turbulenc
 cannot produce; forcing Rohrer onto it gives K1 = −8.4 (negative ΔP below
 0.5 L/s), and it is a *double-lumen* tube (inner cannula ~3× resistance),
 not a bare 7.0. **Carter 2013** (*Anaesthesia*, 6–10 mm trach bench) is the
-best remaining lead; it needs institutional access. Until then TRACH_7_0 is
-grade X, drawn hatched, and excluded from every verdict.
+best remaining lead.
+
+**Carter 2013 and Pryor 2016, read 2026-11 (kept as corroboration, not
+adopted).** Fitting Rohrer to Carter's steady-state pressure–flow table
+(Portex Blueline Ultra, 20–100 L/min) gives, for a bare 7.0 tube, K2 ≈ 7.05
+with K2 alone (K1 1.64 / K2 5.92 unconstrained), against the 7.2 extrapolated
+here — 2% apart; Carter's bare 8.0 gives K2 ≈ 4.38 against Guttmann's 4.63.
+Pryor's size-8 data (Table 2, resistance at 40–60 L/min) imply ΔP ∝ V̇^≈4 for
+both single- and double-lumen tubes, confirming that series cannot be fitted
+with Rohrer. Because Carter and Guttmann are different rigs, mixing them would
+break the within-rig principle (§2.3), so TRACH_7_0 stays grade X, drawn
+hatched, and excluded from every verdict (PI decision 2026-11-18). Both
+papers also show an inner cannula raising tracheostomy-tube resistance ~2–3×
+(Carter: resistive work ×2.2; Pryor: resistance ×3), a bias opposite to that
+of in-use ETTs (`m2_exp6_inuseETT`).
 
 ### 2.4 Metabolic rate is a severity axis — the spec omitted it
 
@@ -228,7 +245,7 @@ Critical illness runs 300–400 mL/min (Model 1b's own spec), and V_A scales
 with VCO₂ at fixed PaCO₂, giving V_A ≈ 6.3–8.4.
 
 This is not a detail. Held at 4.2, the model's **maximum load anywhere on
-the disease grid is 13.6 cmH₂O** — it cannot reach the 19.5 cmH₂O measured
+the disease grid is 13.6 cmH₂O** — it cannot reach the 17.9–22.3 cmH₂O derived
 in failing weaning patients (Vassilakopoulos 1998). The rescue window then
 falls entirely *below* the observed MIP range, producing a spurious "the
 device never matters for real patients" result that is an artefact of
@@ -311,8 +328,13 @@ The model reproduces the actual clinical discrimination with `u_crit = 0.4`:
 
 | | Pi (cmH₂O) | Pimax (cmH₂O) | u = L/C | Predicted | Observed |
 |---|---|---|---|---|---|
-| Failure | 19.5 | 42.3 | **0.46** | > u_crit → fail | fail |
-| Success | 16.7 | 53.8 | **0.31** | < u_crit → wean | success |
+| Failure | 22.3 | 48.4 | **0.46** | > u_crit → fail | fail |
+| Success | 17.9 | 57.6 | **0.31** | < u_crit → wean | success |
+
+Vassilakopoulos defines Pimax = MIP + PEEPi (Table 4); u is as reported and is
+all the calibration uses. Pi is derived as u × Pimax. Versions ≤ 1.0.0 used MIP
+(42.3 / 53.8) as the denominator, giving Pi 19.5 / 16.7; corrected 2026-11-18.
+Model 2's capacity axis is still MIP (42.3 / 53.8), which is what C_max is.
 
 Implemented as a regression test (`tests/tValidation.m`).
 
@@ -342,9 +364,9 @@ This supports the M2c slow-variable extension.
 ## 4. Outstanding
 
 - [x] Rohrer `K1`/`K2` — done for four of five devices (§2.3)
-- [ ] **`TRACH_7_0` K2 — no publishable value.** Blocked on Carter 2013
-      (*Anaesthesia*), which needs institutional access. Currently grade X
-      and excluded from all conclusions.
+- [x] **`TRACH_7_0` K2** — Carter 2013 read; corroborates the extrapolated
+      value within 2% but is a different rig, so it stays grade X and
+      excluded from all conclusions (§2.3; PI decision 2026-11-18).
 - [ ] Device length heterogeneity across sources (§2.6) — documented, not
       resolved; would need a single bench study measuring both resistance
       and internal volume on the same tubes.

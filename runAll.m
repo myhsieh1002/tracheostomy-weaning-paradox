@@ -77,6 +77,7 @@ if ismember(opts.Only, ["all","m2"])
     step('m2_exp3  rescue window (H3)');             R.m2_exp3 = m2_exp3_rescueWindow();
     step('m2_exp4  early warning (H4)');             R.m2_exp4 = m2_exp4_earlyWarning();
     step('m2_exp5  sensitivity + invariance test');  R.m2_exp5 = m2_exp5_sensitivity();
+    step('m2_exp6  in-use ETT scenario');            R.m2_exp6 = m2_exp6_inuseETT();
 end
 
 if ismember(opts.Only, ["all","m2b"])
@@ -86,6 +87,7 @@ if ismember(opts.Only, ["all","m2b"])
     step('vidd_exp3  catabolic: offset vs drain (H3)');        R.vidd_exp3 = vidd_exp3_catabolic();
     step('vidd_exp4  dynamic rescue window (H4, capstone)');   R.vidd_exp4 = vidd_exp4_dynamicRescue();
     step('vidd_exp5  the A-gap, stress-tested');               R.vidd_exp5 = vidd_exp5_Agap();
+    step('vidd_exp6  calibration sensitivity (Jaber, Demoule)'); R.vidd_exp6 = vidd_exp6_calibrationSensitivity();
 end
 
 if ismember(opts.Only, "all")

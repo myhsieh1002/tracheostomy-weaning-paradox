@@ -217,6 +217,30 @@ classdef tModel2 < matlab.unittest.TestCase
             t.verifyEqual(cp.L_total, e.P_mus_mean, 'RelTol', 1e-12);
         end
 
+        function ettK2ScalingLeavesTrachAlone(t)
+            % The in-use ETT scenario must touch ETTs only, and k = 1 must
+            % reproduce the primary model exactly.
+            c15 = wob.scaleEttK2(t.cfg1, 1.5);
+            act = t.cfg1.options_coefficient_set.active;
+            t.verifyEqual(c15.devices.TRACH_8_0.coefficients.(act).K2, ...
+                t.cfg1.devices.TRACH_8_0.coefficients.(act).K2);
+            t.verifyEqual(c15.devices.ETT_7_5.coefficients.(act).K2, ...
+                1.5 * t.cfg1.devices.ETT_7_5.coefficients.(act).K2, 'RelTol', 1e-12);
+            c1 = wob.scaleEttK2(t.cfg1, 1);
+            t.verifyEqual(lc.coupling(c1, t.cfg2, 'ETT_7_5').L_total, ...
+                lc.coupling(t.cfg1, t.cfg2, 'ETT_7_5').L_total, 'RelTol', 1e-12);
+        end
+
+        function inUseEttWidensDeviceLoadReduction(t)
+            % An obstructed ETT raises the ETT load and so the ETT->trach
+            % load reduction; the trach load is unchanged.
+            dL = @(c) lc.coupling(c, t.cfg2, 'ETT_7_5').L_total - lc.coupling(c, t.cfg2, 'TRACH_8_0').L_total;
+            c2 = wob.scaleEttK2(t.cfg1, 2);
+            t.verifyGreaterThan(dL(c2), dL(t.cfg1));
+            t.verifyEqual(lc.coupling(c2, t.cfg2, 'TRACH_8_0').L_total, ...
+                lc.coupling(t.cfg1, t.cfg2, 'TRACH_8_0').L_total, 'RelTol', 1e-12);
+        end
+
         function trachLoadIsBelowEttLoad(t)
             LE = lc.coupling(t.cfg1, t.cfg2, 'ETT_7_5').L_total;
             LT = lc.coupling(t.cfg1, t.cfg2, 'TRACH_8_0').L_total;

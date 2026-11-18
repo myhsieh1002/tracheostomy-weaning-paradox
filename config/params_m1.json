@@ -32,16 +32,16 @@
 
   "devices": {
     "ETT_8_0": {
-      "type": "ETT", "ID_mm": 8.0, "Vd_apparatus_mL": 21,
-      "Vd_source": "Davis 1999 PMID 9927132, interpolated 7.0->8.5 (grade B)",
+      "type": "ETT", "ID_mm": 8.0, "Vd_apparatus_mL": 18,
+      "Vd_source": "Davis 1999 PMID 9927132 Table 3, measured (grade A). Was 21 mL interpolated 7.0->8.5 from the Pierson 2005 tabulation, which omits the measured 8.0; corrected 2026-11-18.",
       "coefficients": {
         "guttmann_within_rig": { "K1": 0.36, "K2": 6.19, "length_cm": 32.3, "grade": "B", "source": "Guttmann 1993 PMID 8363076, refit of published power-law curve to Rohrer form" },
         "flevari_ett":         { "K1": 0.83, "K2": 4.65, "length_cm": null, "grade": "A", "source": "Flevari 2011 PMID 21675060, directly reported in our exact form (Portex Blue Line)" }
       }
     },
     "ETT_7_5": {
-      "type": "ETT", "ID_mm": 7.5, "Vd_apparatus_mL": 18,
-      "Vd_source": "Davis 1999 PMID 9927132, interpolated 7.0->8.5 (grade B)",
+      "type": "ETT", "ID_mm": 7.5, "Vd_apparatus_mL": 16.5,
+      "Vd_source": "Davis 1999 PMID 9927132, interpolated between the measured 7.0 (15 mL) and 8.0 (18 mL) (grade B). Was 18 mL interpolated 7.0->8.5; corrected 2026-11-18.",
       "coefficients": {
         "guttmann_within_rig": { "K1": 0.30, "K2": 8.09, "length_cm": 31.2, "grade": "B", "source": "Guttmann 1993 PMID 8363076, refit" },
         "flevari_ett":         { "K1": 0.92, "K2": 6.01, "length_cm": null, "grade": "A", "source": "Flevari 2011 PMID 21675060, directly reported" }
@@ -125,9 +125,17 @@
     "caveat": "n=9, neuromuscular disease with low V_T, not a general ICU cohort. The RATIO is the check, not the absolute values, since our target_VA differs."
   },
 
+  "inuse_ett": {
+    "_doc": "Sensitivity scenario (2026-11-18, PI decision A4): partially obstructed endotracheal tubes. Every ETT's K2 in the active coefficient set is multiplied by k (wob.scaleEttK2); tracheostomy and native airway unchanged. Run by m2_exp6_inuseETT. k = 1 is the primary model.",
+    "K2_scale": [1, 1.5, 2, 2.5],
+    "_K2_scale_doc": "1.5 and 2 are the scenarios reported in the manuscript; 2.5 is included only for the comparison against Diehl 1999's within-patient fall in work of breathing.",
+    "source": "Flevari 2011 PMID 21675060 (in-vivo/in-vitro K2 1.26-4.30 per patient after 4-11 d of intubation, Table 2, ratios derived here); Diehl 1999 PMID 9927347 (used ETTs +28% resistive work over new; WOB -55% after tracheotomy at identical pressure support).",
+    "grade": "B for the direction, C for the magnitude"
+  },
+
   "load_scale_validation": {
     "_doc": "The model's load must be able to reach the loads actually measured in weaning patients, or the bifurcation analysis is being run outside the clinically relevant range.",
-    "vassilakopoulos1998": { "Pi_failure_cmH2O": 19.5, "Pi_success_cmH2O": 16.7, "source": "Vassilakopoulos 1998 PMID 9700110; Pi DERIVED as (Pi/Pimax)*Pimax (grade B)" },
+    "vassilakopoulos1998": { "Pi_failure_cmH2O": 22.3, "Pi_success_cmH2O": 17.9, "source": "Vassilakopoulos 1998 PMID 9700110; Pi DERIVED as (Pi/Pimax)*Pimax with Pimax = MIP + PEEPi as the paper defines it (48.4 fail, 57.6 success; Table 4): 0.46*48.4, 0.31*57.6 (grade B). Versions <= 1.0.0 used MIP as the denominator (19.5/16.7); corrected 2026-11-18." },
     "normal_resting_Pmus_cmH2O": [5, 10],
     "source_normal": "Bertoni/Goligher, Crit Care 2020;24:106, PMID 32204729 (secondary/review)"
   },

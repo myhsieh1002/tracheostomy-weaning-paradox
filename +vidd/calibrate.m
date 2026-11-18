@@ -6,8 +6,10 @@ function [p, info] = calibrate(cfg, opts)
 %   WHAT IS ANCHORED, AND WHAT IS SOLVED
 %   ------------------------------------
 %   ANCHORED (not touched here):
-%     k_deg = 0.064 /day -- Jaber 2010 (PMID 20813887): twitch airway
-%       pressure fell 32+-6% over 6 days of ventilation, k = -ln(0.68)/6.
+%     k_deg = 0.0701 /day -- Jaber 2010 (PMID 20813887): twitch airway
+%       pressure fell 32+-6% over 5-6 days of ventilation, the baseline
+%       taken ~12.5 h after intubation, so ~5.5 d: k = -ln(0.68)/5.5.
+%       (5 d and 6 d are reported as sensitivity; versions <= 1.0.0 used 6 d.)
 %       Force, in cmH2O, over days: the model's own state and timescale.
 %       Corroborated by four independent thickness studies (0.048-0.115).
 %       g(0) = 1 by convention, so k_deg IS the complete-disuse rate.
@@ -46,7 +48,7 @@ function [p, info] = calibrate(cfg, opts)
 %
 %   The solve also implies how far below baseline the septic patients
 %   started, which can be set against the offset that Demoule's independent
-%   regression coefficient gives (36%). The two are reported, not forced.
+%   regression coefficient gives (33%; 0.30-0.36 by reconstruction). The two are reported, not forced.
 %
 %   WHY LEVINE IS NOT USED, HAVING BEEN THE OBVIOUS CHOICE
 %   -----------------------------------------------------
@@ -102,9 +104,10 @@ rate_z = reshape(z.dTdi_pct_per_day, 1, []) / 100;    % fractional /day
 % measurement nobody has made. It is used for the k_syn solve instead.
 %
 % JABER SETS THE SCALE, ZAMBON SETS THE SHAPE -- and they must not be mixed.
-% The two anchors disagree on the magnitude: Zambon's CMV rate is 0.078/day
-% (thickness), Jaber's is 0.064/day (force), a 22% gap. Normalising Zambon's
-% points by JABER's k_deg would force g(0) = 1.22 against a functional form
+% The two anchors disagree on the magnitude: Zambon's CMV rate is 0.075/day
+% (thickness), Jaber's is 0.070/day (force), a 7% gap (17% when Jaber's
+% interval was taken as 6 d). Normalising Zambon's points by JABER's k_deg
+% would force g(0) = 1.07 against a functional form
 % that has g(0) = 1 by construction, and bury that disagreement in the fit
 % residual -- which is what an earlier version of this function did, for an
 % RMSE of 0.15 that was really a units conflict.
@@ -112,7 +115,7 @@ rate_z = reshape(z.dTdi_pct_per_day, 1, []) / 100;    % fractional /day
 % Normalising Zambon's points by ZAMBON's OWN A=0 rate makes g(0) = 1 exactly
 % and leaves the fit to do only what it can do: determine the SHAPE. The
 % scale stays with Jaber, which is the better anchor (force, in the model's
-% own units). The 22% disagreement is then visible in info.scale_conflict
+% own units). The disagreement is then visible in info.scale_conflict
 % rather than hidden.
 useForG  = rate_z < 0;
 A_fit    = A_z(useForG);
@@ -225,12 +228,13 @@ info.C_star_at_1_nodisease = vidd.equilibriumCapacity(1, setD(p, 0));
 info.C_star_at_0_nodisease = vidd.equilibriumCapacity(0, setD(p, 0));
 info.k_syn_identified      = true;    % from Lecronier's two groups
 
-% What Jaber should reproduce: -32% force at 6 days under ventilation.
+% What Jaber should reproduce: -32% force at ~5.5 days under ventilation.
+% NOT an independent check: k_deg is calibrated from this very number.
 info.jaber = cfg.validation.jaber2010;
 info.jaber_predicted_loss_at_A0 = 1 - localFracAt(p, 0, cfg.validation.jaber2010.duration_days);
 
 info.constraints = [
-    "k_deg  <- ANCHORED: Jaber 2010 PMID 20813887, TwPtr -32% at 6 d -> 0.064/day"
+    "k_deg  <- ANCHORED: Jaber 2010 PMID 20813887, TwPtr -32% at ~5.5 d -> 0.0701/day"
     "g_min, p_mono <- SOLVED: least squares on Zambon 2016 PMID 26992064 (negative-rate points only)"
     "k_syn  <- SOLVED: Lecronier 2022 PMID 35403916, two groups at one intervention"
 ];

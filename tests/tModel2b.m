@@ -121,12 +121,13 @@ classdef tModel2b < matlab.unittest.TestCase
         % ---------------- calibration ----------------
 
         function kDegIsAnchoredToJaber(t)
-            t.verifyEqual(t.info.k_deg, 0.064, 'AbsTol', 1e-6);
+            t.verifyEqual(t.info.k_deg, -log(0.68)/5.5, 'AbsTol', 1e-4);
         end
 
         function reproducesJaberForceLoss(t)
-            % Independent check: complete disuse for 6 days should lose ~32%,
-            % which is Jaber's measured force loss.
+            % Consistency check (k_deg is calibrated from Jaber, so this is
+            % not independent): complete disuse for ~5.5 days should lose
+            % ~32%, Jaber's measured force loss.
             t.verifyEqual(t.info.jaber_predicted_loss_at_A0, 0.32, 'AbsTol', 0.03);
         end
 
@@ -153,9 +154,12 @@ classdef tModel2b < matlab.unittest.TestCase
         end
 
         function scaleConflictIsReportedNotHidden(t)
-            % Jaber and Zambon disagree ~22% on the disuse rate; the code
-            % must surface that rather than bury it in the fit.
-            t.verifyGreaterThan(t.info.scale_conflict_ratio, 1.1);
+            % Jaber and Zambon disagree on the disuse rate (~7% with Jaber's
+            % interval read as 5.5 d; ~17% at 6 d); the code must surface
+            % that rather than bury it in the fit.
+            t.verifyEqual(t.info.scale_conflict_ratio, ...
+                t.info.scale_conflict_zambon_k / t.info.k_deg, 'RelTol', 1e-12);
+            t.verifyGreaterThan(t.info.scale_conflict_ratio, 1.0);
             t.verifyLessThan(t.info.scale_conflict_ratio, 1.4);
         end
 
