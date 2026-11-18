@@ -11,7 +11,7 @@ function T = vidd_exp2_trajectory(cfgV, cfgM1)
 %
 %   THE ANCHORS ARE OVERLAID SO THE FIT IS VISIBLE
 %   ----------------------------------------------
-%   Jaber 2010 (-32% force at 6 d, controlled MV) and the exponential form
+%   Jaber 2011 (-32% force after 5-6 d, read as 5.5 d, controlled MV) and the exponential form
 %   check from Schepens 2015 are drawn against the low-activity trajectory,
 %   so the calibration is shown rather than asserted.
 
@@ -54,7 +54,7 @@ rJaber = vidd.simulateCapacity(cfgV, p, @(t) 0, Days=8);
 plot(rJaber.t, 100*rJaber.C/rJaber.C(1), '-', 'Color', c.ETT, 'LineWidth',1.8, 'DisplayName','model, A=0 (controlled MV)');
 j = cfgV.validation.jaber2010;
 scatter(j.duration_days, 100*(1-j.force_loss_fraction), 60, c.stable, 'filled', ...
-    'MarkerEdgeColor','w', 'DisplayName','Jaber 2010 (-32% @ 6 d)');
+    'MarkerEdgeColor','w', 'DisplayName',sprintf('Jaber 2011 (-32%% @ %.1f d)', j.duration_days));
 % Schepens form-check points
 sch = cfgV.validation.schepens2015_form_check;
 scatter(sch.at_hours/24, 100-sch.observed_loss_pct, 35, c.grey, 'filled', ...
@@ -90,8 +90,9 @@ viz.save(fig, 'fig_vidd_trajectory');
 T = cell2table(rows, 'VariableNames', {'scenario','support_level','A','C0','C_end','Cstar','tau_days'});
 writetable(T, fullfile(wob.projectRoot,'results','tables','vidd_exp2_trajectory.csv'));
 
-fprintf('\n  Jaber check: model %.1f%% loss at 6 d vs measured 32%%\n', ...
-    100*(1 - rJaber.C(rJaber.t>=6 & rJaber.t<6.1)/rJaber.C(1)));
+[~, iJ] = min(abs(rJaber.t - j.duration_days));
+fprintf('\n  Jaber check (consistency; k_deg is calibrated from it): model %.1f%% loss at %.1f d vs measured 32%%\n', ...
+    100*(1 - rJaber.C(iJ)/rJaber.C(1)), j.duration_days);
 fprintf('  Capacity IS recoverable: switching to spontaneous at day 7 reverses the decline.\n');
 disp(T);
 end

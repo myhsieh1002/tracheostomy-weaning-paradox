@@ -141,7 +141,7 @@ means bistability never disappears with falling capacity (a *wedge*, not a
 cusp). Reproduces Vassilakopoulos 1998's actual wean/fail discrimination.
 
 ### Model 2b — the device may also raise capacity, but the size is unmeasured
-Capacity is reversible and activity-sensitive (`k_deg` from Jaber 2010, `k_syn`
+Capacity is reversible and activity-sensitive (`k_deg` from Jaber 2011, `k_syn`
 from Lecronier 2022's two groups). Put in Model 2's units, the tracheostomy's
 capacity effect *can* exceed its load effect — the two channels cross at an
 activity gap of only **~0.04** — but the magnitude rides on the ETT→trach
@@ -183,7 +183,7 @@ revision logs.
 | `S_body = 15` (no unit) | **15 mL/(kg·mmHg)** | Absolute reading gives a 0.5 min body time constant, contradicting the spec's own "minutes to hours". |
 | H3: sepsis is an activity-independent drain | **a reversible offset** | Lecronier 2022: septic force *rose* 19% over 4 d. Demoule 2013: an admission offset, no Day1→Day3 decline. |
 | degradation g(A) is U-shaped | **monotonic (default)** | Zambon 2016, the only study of atrophy *rate* by support, is monotone. The U exists in outcome (Goligher 2018), not in dC/dt. |
-| `k_deg` from Levine 2008 | **from Jaber 2010** | Levine's 18–69 h window implies a rate 4–17× every other study; it was the obvious anchor and would have been wrong by an order of magnitude. |
+| `k_deg` from Levine 2008 | **from Jaber 2011** | Levine's 18–69 h window implies a rate 4–17× every other study; it was the obvious anchor and would have been wrong by an order of magnitude. |
 
 Both spec versions of the overturned hypotheses are kept as switchable modes
 (`g_mode`, `d_mode`) so the contrast is a result, not a silent choice. And
@@ -194,18 +194,18 @@ json/xml only.
 
 ## External validations
 
-Checks, not fits, except the one marked as a calibration target.
+Six are independent checks; three (marked) are consistency checks against the data used for calibration.
 
 | check | source | observed | model |
 |---|---|---|---|
-| ETT vs trach resistance, matched ID 8.0, same rig | Guttmann 1993 | trach 70% of ETT | **70.7%** |
+| ETT vs trach resistance, matched ID 8.0, same rig | Guttmann 1993 | trach 70% of ETT | **70.7%** *(consistency: coefficients refit from the same curves)* |
 | WOB ratio, non-intubated vs tracheostomised | Chadda 2002 (n=9) | 1.32 | **1.36** |
 | ΔV_D, non-intubated vs tracheostomised | Chadda 2002 | 74 mL | **66 mL** |
 | WOB ordering extubated > ETT > trach | Davis 1999 | that order | **that order** |
 | dead-space change ETT→trach | Mohr 2001, Joseph 2013 | null | **null** |
-| diaphragm force loss, 6 d controlled MV | Jaber 2010 | −32% | **−30%** |
-| sepsis capacity offset | Lecronier 2022 vs Demoule 2013 | 31% vs 36% (two methods) | **agree to 5.1 pp** |
-| weaning discrimination, Pi/Pimax 0.31 vs 0.46 | Vassilakopoulos 1998 | wean / fail | **wean / fail** *(calibration target)* |
+| diaphragm force loss, 5–6 d controlled MV | Jaber 2011 | −32% | **−31%** *(consistency: k_deg calibrated from it)* |
+| sepsis capacity offset | Lecronier 2022 vs Demoule 2013 | 31.5% vs 33% (two methods) | **agree to 1.5 pp** |
+| weaning discrimination, Pi/Pimax 0.31 vs 0.46 | Vassilakopoulos 1998 | wean / fail | **wean / fail** *(consistency: calibration target)* |
 
 ---
 

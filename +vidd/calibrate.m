@@ -6,7 +6,7 @@ function [p, info] = calibrate(cfg, opts)
 %   WHAT IS ANCHORED, AND WHAT IS SOLVED
 %   ------------------------------------
 %   ANCHORED (not touched here):
-%     k_deg = 0.0701 /day -- Jaber 2010 (PMID 20813887): twitch airway
+%     k_deg = 0.0701 /day -- Jaber 2011 (PMID 20813887): twitch airway
 %       pressure fell 32+-6% over 5-6 days of ventilation, the baseline
 %       taken ~12.5 h after intubation, so ~5.5 d: k = -ln(0.68)/5.5.
 %       (5 d and 6 d are reported as sensitivity; versions <= 1.0.0 used 6 d.)
@@ -234,7 +234,7 @@ info.jaber = cfg.validation.jaber2010;
 info.jaber_predicted_loss_at_A0 = 1 - localFracAt(p, 0, cfg.validation.jaber2010.duration_days);
 
 info.constraints = [
-    "k_deg  <- ANCHORED: Jaber 2010 PMID 20813887, TwPtr -32% at ~5.5 d -> 0.0701/day"
+    "k_deg  <- ANCHORED: Jaber 2011 PMID 20813887, TwPtr -32% at ~5.5 d -> 0.0701/day"
     "g_min, p_mono <- SOLVED: least squares on Zambon 2016 PMID 26992064 (negative-rate points only)"
     "k_syn  <- SOLVED: Lecronier 2022 PMID 35403916, two groups at one intervention"
 ];

@@ -18,11 +18,11 @@ Both spec versions are retained as switchable modes (`g_mode`, `d_mode`) so the 
 
 | parameter | value | basis |
 |---|---|---|
-| k_deg | 0.0701 /day | **anchored** — Jaber 2010 (PMID 20813887): twitch pressure −32% at ~5.5 d |
+| k_deg | 0.0701 /day | **anchored** — Jaber 2011 (PMID 20813887): twitch pressure −32% at ~5.5 d |
 | g_min, p_mono | 0.000, 1.384 | **solved** — Zambon 2016's atrophy rates by mode |
 | k_syn | 0.3177 /day | **solved** — Lecronier 2022 two-group relaxation |
 
-**Three independent checks land.** Jaber (not used to fit anything but the rate) is reproduced: model 31% loss at 5.5 d vs measured 32%. The Lecronier two-group solve implies a sepsis offset of 32%, against Demoule's independent 33% — agreeing to 1.5 percentage points. Timescale separation from Model 2 is 14–46×, so the quasi-static coupling holds.
+**Calibration consistency and one independent check.** Jaber is reproduced — model 31% loss at 5.5 d vs measured 32% — but this is consistency, not validation: k_deg is calibrated from it. The independent check: the Lecronier two-group solve implies a sepsis offset of 32%, against Demoule's independent 33% — agreeing to 1.5 percentage points. Timescale separation from Model 2 is 14–46×, so the quasi-static coupling holds.
 
 **Levine 2008 was deliberately NOT used** — its 18–69 h window implies a rate 4–17× every other study. It was the obvious anchor and it would have been wrong by an order of magnitude.
 
