@@ -39,32 +39,45 @@ window width               =  ΔL_device / l_high
 
 | V_A (L/min) | VCO₂ | C_rs | L_ETT | L_TRACH | ΔL | window in C_max | reaches observed MIP? |
 |---|---|---|---|---|---|---|---|
-| 4.3 | 206 | 0.02 | 12.43 | 11.48 | 0.94 | (32.3, 35.0) | no |
-| 4.3 | 206 | 0.04 | 8.21 | 7.42 | 0.79 | (20.9, 23.1) | no |
-| 4.3 | 206 | 0.06 | 6.83 | 6.09 | 0.74 | (17.2, 19.2) | no |
-| 6.5 | 308 | 0.02 | 17.29 | 15.97 | 1.32 | (45.0, 48.7) | **yes** |
-| 6.5 | 308 | 0.04 | 11.57 | 10.41 | 1.16 | (29.3, 32.6) | **yes** |
-| 6.5 | 308 | 0.06 | 9.69 | 8.59 | 1.11 | (24.2, 27.3) | **yes** |
-| 8.6 | 411 | 0.02 | 22.40 | 20.61 | 1.79 | (58.0, 63.1) | **yes** |
-| 8.6 | 411 | 0.04 | 15.17 | 13.54 | 1.63 | (38.1, 42.7) | **yes** |
-| 8.6 | 411 | 0.06 | 12.81 | 11.22 | 1.58 | (31.6, 36.1) | **yes** |
+| 4.3 | 206 | 0.02 | 12.37 | 11.48 | 0.88 | (32.3, 34.8) | no |
+| 4.3 | 206 | 0.04 | 8.17 | 7.42 | 0.75 | (20.9, 23.0) | no |
+| 4.3 | 206 | 0.06 | 6.79 | 6.09 | 0.70 | (17.2, 19.1) | no |
+| 6.5 | 308 | 0.02 | 17.22 | 15.97 | 1.25 | (45.0, 48.5) | **yes** |
+| 6.5 | 308 | 0.04 | 11.52 | 10.41 | 1.12 | (29.3, 32.5) | **yes** |
+| 6.5 | 308 | 0.06 | 9.66 | 8.59 | 1.07 | (24.2, 27.2) | **yes** |
+| 8.6 | 411 | 0.02 | 22.33 | 20.61 | 1.73 | (58.0, 62.9) | **yes** |
+| 8.6 | 411 | 0.04 | 15.13 | 13.54 | 1.59 | (38.1, 42.6) | **yes** |
+| 8.6 | 411 | 0.06 | 12.77 | 11.22 | 1.54 | (31.6, 36.0) | **yes** |
 
 **Three findings that depart from the spec.**
 
-1. **The window moves, it does not shrink.** Width = ΔL_device/l_high, and ΔL_device is near-constant across severity, so the band keeps its width (~2.1–5.0 cmH₂O) and slides upward as load rises. The spec predicted a window collapsing to nothing at low C_max; that does not happen.
+1. **The window moves, it does not shrink.** Width = ΔL_device/l_high, and ΔL_device is near-constant across severity, so the band keeps its width (~2.0–4.9 cmH₂O) and slides upward as load rises. The spec predicted a window collapsing to nothing at low C_max; that does not happen.
 2. **Metabolic rate decides whether the window is even reachable.** At a normal V_A = 4.2 L/min the model cannot reach the loads measured in failing weaning patients (Vassilakopoulos: Pi = 19.5 cmH₂O) and the window falls *below* the observed MIP range entirely — a spurious "the device never matters" result that is an artefact of assuming normal metabolism. The spec did not treat V_A as a severity axis; it is one, and Sobol ranks it the single largest driver of total load.
-3. **The window is narrow wherever it sits**: mean 3.4 cmH₂O against a clinical C_max range of 20–70, i.e. **~7% of the capacity axis**.
+3. **The window is narrow wherever it sits**: mean 3.3 cmH₂O against a clinical C_max range of 20–70, i.e. **~7% of the capacity axis**.
 
 **The paradox, quantified.** For a tracheostomy to decide a patient's outcome, that patient's capacity must land inside a band a few cmH₂O wide whose position depends on their compliance, airway resistance *and* metabolic rate — none of which is known precisely at the bedside. An unselected trial puts few patients in the window and averages to approximately nothing.
 
 ![rescue](figures/fig_rescue_window.png)
 
+### Sensitivity — partially obstructed (in-use) endotracheal tubes
+
+The primary model uses bench coefficients of new tubes; in-vivo ETT K2 is 1.3–4.3× the bench value after 4–11 days of intubation (Flevari 2011). Scaling every ETT's K2 by k (tracheostomy unchanged; `wob.scaleEttK2`, `m2_exp6_inuseETT`):
+
+| ETT K2 × k | f_device (ETT 7.5) | dilution monotone | rescue band mean (range), cmH₂O | of 20–70 range | total-WOB fall ETT→trach, healthiest / sickest |
+|---|---|---|---|---|---|
+| 1.0 | 0.111–0.356 | yes | 3.28 (1.98–4.86) | 6.6% | 21.0% / 9.9% |
+| 1.5 | 0.156–0.448 | yes | 5.74 (3.25–8.61) | 11.5% | 32.3% / 14.3% |
+| 2.0 | 0.195–0.517 | yes | 8.20 (4.52–12.36) | 16.4% | 40.7% / 18.4% |
+| 2.5 | 0.232–0.571 | yes | 10.65 (5.80–16.11) | 21.3% | 47.3% / 22.1% |
+
+The band widens roughly in proportion to the device's load reduction, so the primary ≈3.3 cmH₂O is a lower bound for a bare tracheostomy tube; the dilution and the band's disease-dependent position are unchanged (overlap with the observed capacity range at V_A [6.47 8.63] L/min in every scenario). Even at k = 2.5 the total-WOB fall stays well below Diehl 1999's −55%, which needs mechanisms Model 1 lacks (intrinsic PEEP, operating volume). An inner cannula biases the other way (Carter 2013; Pryor 2016) and is not modelled.
+
 ## Validation — Vassilakopoulos 1998
 
 | group | Pi (cmH₂O) | Pimax | l = Pi/Pimax | model predicts | observed |
 |---|---|---|---|---|---|
-| failure | 19.5 | 42.3 | 0.460 | **fail** | fail |
-| success | 16.7 | 53.8 | 0.310 | **wean** | wean |
+| failure | 22.3 | 48.4 | 0.460 | **fail** | fail |
+| success | 17.9 | 57.6 | 0.310 | **wean** | wean |
 
 Fold at l_high = **0.3550**, between the two groups. Discrimination reproduced: **yes**.
 

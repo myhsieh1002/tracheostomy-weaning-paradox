@@ -1,9 +1,9 @@
 d_mode,scenario,septic,d_disease,C0,C_end
-offset,trach_spontaneous,0,0,80,73.4232432377514
-offset,deep_sedation_controlled,0,0,80,41.6514591807121
-offset,trach_spontaneous,1,0,51.2,73.1191015300725
-offset,deep_sedation_controlled,1,0,51.2,38.2543817694146
-rate,trach_spontaneous,0,0,80,73.4232432377514
-rate,trach_spontaneous,0,0.05,80,59.6763019846314
-rate,trach_spontaneous,0,0.1,80,50.2296965773958
-rate,trach_spontaneous,0,0.2,80,38.1527777623947
+offset,trach_spontaneous,0,0,80,72.7963960794017
+offset,deep_sedation_controlled,0,0,80,39.393454834234
+offset,trach_spontaneous,1,0,53.6,72.5175995101074
+offset,deep_sedation_controlled,1,0,53.6,36.5822450416587
+rate,trach_spontaneous,0,0,80,72.7963960794017
+rate,trach_spontaneous,0,0.05,80,59.1634414677367
+rate,trach_spontaneous,0,0.1,80,49.7967648848684
+rate,trach_spontaneous,0,0.2,80,37.8233682289596

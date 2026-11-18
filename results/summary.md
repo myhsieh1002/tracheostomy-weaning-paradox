@@ -40,11 +40,11 @@ The ~72 mL upper-airway bypass is measured against the **non-intubated** state, 
 | arm | dead space (mL) | required V_E (L/min) | mean P_mus (cmH₂O) | WOB (J/min) |
 |---|---|---|---|---|
 | not intubated | 150.0 | 9.17 | 7.67 | 7.55 |
-| ETT 7.5 | 96.0 | 8.20 | 7.58 | 6.80 |
+| ETT 7.5 | 94.5 | 8.17 | 7.55 | 6.75 |
 | trach 8.0 | 83.5 | 7.97 | 6.53 | 5.57 |
 
-- dead space removed by **intubation**: 54.0 mL
-- dead space removed by **ETT → trach**: 12.5 mL — only 23% of it
+- dead space removed by **intubation**: 55.5 mL
+- dead space removed by **ETT → trach**: 11.0 mL — only 20% of it
 
 **External check — Chadda 2002** (PMID 12447520, the only in vivo non-intubated vs tracheostomised comparison): observed WOB ratio 1.32, model **1.36** (3% difference); observed ΔV_D 74 mL, model 66 mL.
 
@@ -58,13 +58,13 @@ The ~72 mL upper-airway bypass is measured against the **non-intubated** state, 
 
 | R_aw \ C_rs | 0.02 | 0.03 | 0.04 | 0.05 | 0.06 |
 |---|---|---|---|---|---|
-| **1** | 0.167 | 0.228 | 0.278 | 0.321 | 0.357 |
-| **3** | 0.156 | 0.208 | 0.249 | 0.282 | 0.310 |
-| **6** | 0.142 | 0.183 | 0.215 | 0.239 | 0.259 |
-| **10** | 0.127 | 0.159 | 0.182 | 0.199 | 0.212 |
-| **15** | 0.112 | 0.136 | 0.152 | 0.164 | 0.173 |
+| **1** | 0.167 | 0.227 | 0.277 | 0.320 | 0.356 |
+| **3** | 0.156 | 0.207 | 0.248 | 0.282 | 0.309 |
+| **6** | 0.142 | 0.183 | 0.214 | 0.239 | 0.258 |
+| **10** | 0.126 | 0.158 | 0.181 | 0.198 | 0.212 |
+| **15** | 0.111 | 0.136 | 0.152 | 0.164 | 0.173 |
 
-Monotone in both directions across the whole grid: f_device falls as R_aw rises and as C_rs falls. Range **0.112 – 0.357**.
+Monotone in both directions across the whole grid: f_device falls as R_aw rises and as C_rs falls. Range **0.111 – 0.356**.
 
 ![heatmap](figures/fig_device_fraction_heatmap.png)
 
@@ -72,11 +72,11 @@ Monotone in both directions across the whole grid: f_device falls as R_aw rises 
 
 | parameter | S1 | ST |
 |---|---|---|
-| R\_aw\_native | 0.272 | 0.312 |
+| R\_aw\_native | 0.272 | 0.313 |
 | K2\_scale | 0.269 | 0.287 |
-| RR | 0.214 | 0.234 |
+| RR | 0.213 | 0.232 |
 | C\_rs | 0.128 | 0.151 |
-| target\_VA\_L\_min | 0.061 | 0.062 |
+| target\_VA\_L\_min | 0.061 | 0.063 |
 | Vd\_upper\_bypassed\_mL | 0.005 | 0.006 |
 | K1\_scale | 0.001 | 0.001 |
 
