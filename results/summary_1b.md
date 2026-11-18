@@ -57,8 +57,8 @@ What happens after tracheostomy depends entirely on what the patient does with t
 
 | assumption | PaCO₂ | V_E |
 |---|---|---|
-| V_E held fixed | falls ~1.3 mmHg | unchanged |
-| **PaCO₂ regulated (Chadda)** | **unchanged** | **falls ~0.22 L/min** |
+| V_E held fixed | falls ~1.14 mmHg | unchanged |
+| **PaCO₂ regulated (Chadda)** | **unchanged** | **falls ~0.20 L/min** |
 
 **The dead-space benefit shows up in effort, not in blood gas.** So a study looking for it in PaCO₂ or V_D/V_T finds nothing — and that absence is not evidence the benefit is absent. It is the same reading that reconciles Mohr 2001 and Joseph 2013 with the model.
 

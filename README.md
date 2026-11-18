@@ -71,8 +71,8 @@ The MATLAB MCP server attaches to a *shared* desktop instance. To avoid
 clobbering another session's workspace, run headless — an isolated process:
 
 ```bash
-matlab -batch "runAll"          # tests + 19 experiments + 4 summaries (~4 min)
-matlab -batch "runTests('all')" # 121 tests only (~10 s + startup)
+matlab -batch "runAll"          # tests + 21 experiments + 4 summaries (~3 min)
+matlab -batch "runTests('all')" # 123 tests only (~10 s + startup)
 ```
 
 ```matlab
@@ -99,8 +99,8 @@ config/    params_m1.json  params_m2.json  params_co2.json  params_vidd.json
 +lc/       Model 2  — load-capacity dynamics, folds, rescue API, coupling
 +vidd/     Model 2b — VIDD capacity dynamics, U/monotone degradation, coupling
 +viz/      shared figure style
-experiments/   exp1-5, co2_exp1-4, m2_exp1-5, vidd_exp1-5   (19)
-tests/         tModel1 (29)  tModel2 (34)  tModel1b (30)  tModel2b (28)  = 121
+experiments/   exp1-5, co2_exp1-4, m2_exp1-6, vidd_exp1-6   (21)
+tests/         tModel1 (29)  tModel2 (36)  tModel1b (30)  tModel2b (28)  = 123
 docs/          CALIBRATION.md — provenance and evidence grade for every number
 results/       figures, tables, summary.md / _1b / _m2 / _2b
 runAll.m  runTests.m  writeSummary.m

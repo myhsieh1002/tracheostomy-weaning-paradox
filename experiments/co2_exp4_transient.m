@@ -103,6 +103,9 @@ viz.save(fig, 'fig_co2_transient');
 T = table(outA.t', outA.PA', outA.Pv', outB.PA', outB.Pv', ...
     'VariableNames', {'t_min','PaCO2_fixedVE','PvCO2_fixedVE','PaCO2_regulated','PvCO2_regulated'});
 writetable(T, fullfile(wob.projectRoot,'results','tables','co2_exp4_transient.csv'));
+% Headline deltas for writeSummary (so the summary never hard-codes them).
+T.Properties.UserData = struct('dPaCO2_fixedVE', outA.PA(end) - outA.PA(1), ...
+    'dVE_regulated', vT.V_E - vE.V_E, 'tau_lung', outA.tau_lung, 'tau_body', outA.tau_body);
 
 fprintf('\n  Timescales: tau_lung = %.2f min, tau_body = %.1f min (ratio %.0f)\n', ...
     outA.tau_lung, outA.tau_body, outA.tau_body/outA.tau_lung);
