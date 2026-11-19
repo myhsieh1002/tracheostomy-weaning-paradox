@@ -116,7 +116,7 @@
   },
 
   "chadda2002_validation": {
-    "_doc": "The only in vivo study comparing the NON-INTUBATED state with the tracheostomised state (n=9 neuromuscular, crossover, tube plugged vs open). It is therefore the only direct check on the three-arm structure of exp3, and the only in vivo estimate of dV_D itself. Mohr 2001 and Joseph 2013 compare ETT->trach and bear on the apparatus term only.",
+    "_doc": "The only in vivo study comparing the NON-INTUBATED state with the tracheostomised state (n=9 neuromuscular, crossover: tracheostomy tube removed and stoma sealed, breathing through a mouthpiece with a nose clip, vs breathing through the tube). The 74 mL is a PHYSIOLOGICAL dead-space difference (VDphys 230 vs 156 mL) at different tidal volumes (400 vs 330 mL), not a pure anatomical bypass volume. The native upper-airway resistance is set from the same study, so the WOB ratio and dV_D are partly, not fully, independent checks. It is therefore the only direct check on the three-arm structure of exp3, and the only in vivo estimate of dV_D itself. Mohr 2001 and Joseph 2013 compare ETT->trach and bear on the apparatus term only.",
     "mouth_breathing":   { "Vd_mL": 230, "V_T_mL": 400, "WOB_J_min": 9.1 },
     "tracheal_breathing":{ "Vd_mL": 156, "V_T_mL": 330, "WOB_J_min": 6.9 },
     "dVd_mL": 74,

@@ -87,8 +87,8 @@ nothing:
 
 | Study | n | Result |
 |---|---|---|
-| Mohr 2001 (PMID 11706329) | 42 | V_D/V_T 0.51 ± 0.10 → 0.51 ± 0.11 — no change |
-| Joseph 2013 (PMID 23530788) | 24 | Dead-space fraction 41 ± 12.6% → 40 ± 14.6%, p = 0.75 |
+| Mohr 2001 (PMID 11706329) | 45 (42 weaned) | V_D/V_T 0.51 ± 0.11 → 0.52 ± 0.11, p = 0.31 — no change *(corrected 2026-11-19 from the primary Table 2; earlier values were a secondary citation via Joseph 2013)* |
+| Joseph 2013 (PMID 23530788) | 24 | Dead-space fraction 41 ± 12.6% → 40 ± 14.6%, p = 0.75 *(abstract values; the paper's Table 2 gives 40% → 42%, V_D 194.5 → 219 mL, p = 0.228 — both null)* |
 
 Joseph's title says it outright: *"Tracheostomy in the critically ill: the
 myth of dead space."* The model predicts a null and the clinical
@@ -132,7 +132,7 @@ sources but **no primary source was found**; it is not used.
 | Parameter | Value | Source | Grade |
 |---|---|---|---|
 | `Vd_anatomic_mL` | 150 (≈2.2 mL/kg at 68 kg) | Radford 1955, PMID 13233138 | A |
-| — preferred if height known | `V_D = 7.585 × Ht(cm)^2.363 × 1e-4` | Hart 1963, PMID 31094493 (n=73, r=0.917) | A |
+| — preferred if height known | `V_D = 7.585 × Ht(cm)^2.363 × 1e-4` | Hart 1963, PMID 31094493 (n=73 healthy, aged 4–42, r=0.917) | A |
 | `Vd_upper_bypassed_mL` | 72 (range **40 / 72 / 90**) | Nunn 1959, PMID 13641137 (n=6 cadavers); Chadda 2002, PMID 12447520 (n=9, 74 mL) | A, but weak |
 
 Note: "150 mL" is a pedagogic round number; Pierson sources it to *Egan's
@@ -166,8 +166,9 @@ with length, so the device geometry must be self-consistent — see
 `§2.4 Open issues`.
 
 Davis 1999 also reports, in vivo (n=20): WOB/min 8.9 ± 2.9 → 6.6 ± 1.4 J/min
-after tracheostomy (p < 0.04); airway resistance 9.4 ± 4.1 → 6.3 ± 4.5
-cmH₂O/(L/s) (p < 0.07). These are direct validation targets for Mode B.
+after tracheostomy (p < 0.04); WOB per litre 0.97 → 0.81 J/L (−16%, p = .09);
+intrinsic PEEP 2.9 → 1.6 cmH₂O (p = .02); **expiratory** airway resistance
+9.4 ± 4.1 → 6.3 ± 4.5 cmH₂O/(L/s) (p < 0.07). These are direct validation targets for Mode B.
 
 ### 2.3 Rohrer coefficients
 

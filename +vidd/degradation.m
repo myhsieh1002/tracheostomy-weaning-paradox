@@ -26,16 +26,19 @@ function g = degradation(A, p)
 %   ----------------------------------------------------------------
 %   Because the U is measured at a different level than this function
 %   operates at. Goligher 2018 (PMID 28930478, n=191) is real and
-%   well-adjusted: a thickening fraction of 15-30% gives the shortest time
-%   to liberation, both tails worse. But that is a U in a CLINICAL OUTCOME.
+%   well-adjusted: in a post hoc analysis a thickening fraction of 15-30%
+%   gives the shortest ventilation; the low-effort tail is clearly worse,
+%   while the >30% group (n=12) is not significant after adjustment (similar
+%   effect size). At most that is a U in a CLINICAL OUTCOME.
 %   g is a rate of capacity loss, and nobody has measured a U in that.
 %   The only study that looked (Zambon) found the opposite.
 %
 %   The two are reconcilable -- if high-effort injury manifests as
 %   dysfunctional THICKENING rather than thinning, atrophy rate could be
 %   monotonic while function is U-shaped. That is Goligher's own reading and
-%   is consistent with maximal thickening fraction being depressed in BOTH
-%   tails (Goligher 2015). It has never been quantified.
+%   is consistent with maximal thickening fraction being depressed in both
+%   tails in a small subset of Goligher 2015 (combined n=10, P=0.05). It has
+%   never been quantified.
 %
 %   So: 'monotonic' is what the rate data support; 'ushape' is the
 %   hypothesis. Running both, and reporting which conclusions survive, is
@@ -45,8 +48,8 @@ function g = degradation(A, p)
 %   ------------------------------
 %   In 'ushape' mode, a_injury has NO published constraint at all:
 %   Orozco-Levi 2001 proves load-induced sarcomere disruption exists in
-%   humans but gives no dose-response, no time course and no force
-%   measurement. The exponents p and q are pure invention -- no study has
+%   humans but gives no dose-response and no time course; force (PImax,
+%   Pdimax) was measured but not related to the injury. The exponents p and q are pure invention -- no study has
 %   measured the shape of degradation against effort. They are sensitivity
 %   parameters and are reported as such.
 %

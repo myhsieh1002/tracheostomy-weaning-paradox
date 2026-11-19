@@ -29,9 +29,13 @@ function [p, info] = calibrate(cfg, opts)
 %
 %   (2) LOCATION OF THE RIGHT FOLD  ->  s
 %       By the scale invariance (lc.normalizedFolds), the fold sits at a
-%       fixed normalised load l_high = L/C_max, which IS Pi/Pimax -- given
-%       that Pimax is the rested value measured before the trial, so that it
-%       reads as the capacity ceiling rather than an already-fatigued state.
+%       fixed normalised load l_high = L/C_max, which IS Pi/Pimax.
+%       Vassilakopoulos measured MIP at the END of each spontaneous-breathing
+%       trial, before reconnection -- not as a rested pre-trial value -- so in
+%       the failure trial it may already include fatigue and dynamic
+%       hyperinflation. Reading it as the capacity ceiling is an
+%       approximation; the reported ratio Pi/Pimax (Pimax = MIP + PEEPi) is
+%       used as is.
 %       Vassilakopoulos 1998 (PMID 9700110) measured, in the same patients,
 %       Pi/Pimax = 0.31 when they weaned and 0.46 when they failed. For the
 %       model to reproduce that discrimination, the fold must separate them:

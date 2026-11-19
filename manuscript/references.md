@@ -42,7 +42,7 @@ moves and the endpoint does not*, and answers it mechanistically.
 | M1.3 | **Davis K et al. Arch Surg 1999;134(1):59–62. PMID 9927132.** | Apparatus dead space per device; in-vivo WOB ordering extubated > ETT > trach. | A |
 | M1.4 | **Nunn JF, Campbell EJM, Peckett BW. J Appl Physiol 1959;14(2):174–6. PMID 13641137.** | Upper-airway dead space 72±32 mL (n=6 cadavers) — the origin of "trach halves dead space." | A (weak) |
 | M1.5 | **Chadda K et al. Intensive Care Med 2002;28(12):1761–7. PMID 12447520.** | Only in-vivo non-intubated vs tracheostomised ΔV_D (74 mL) and WOB ratio (1.32). Validation target. | A |
-| M1.6 | **Mohr AM et al. J Trauma 2001;51(5):843–8. PMID 11706329.** | No V_D/V_T change after tracheostomy (0.51→0.51). Null validation of the cancellation. | A |
+| M1.6 | **Mohr AM et al. J Trauma 2001;51(5):843–8. PMID 11706329.** | No V_D/V_T change after tracheostomy (0.51→0.52, p = 0.31; n = 45). Null validation of the cancellation. | A |
 | M1.7 | **Joseph MJ et al. Anaesth Intensive Care 2013;41(2):216–21. PMID 23530788.** | "The myth of dead space": 41%→40%, p=0.75. Null validation. | A |
 | M1.8 | **Radford EP. J Appl Physiol 1955;7(4):451–60. PMID 13233138.** | Anatomic dead space ≈2.2 mL/kg. | A |
 | M1.9 | **Hart MC et al. J Appl Physiol 1963;18(3):519–22. PMID 31094493.** | Height-based dead-space scaling (better than weight). | A |
@@ -104,9 +104,10 @@ Shares M1.3–M1.7 for dead space. Additional:
 - **Every mechanism number is graded**, and the load axis (M1/M2) is anchored on
   A-grade primary data; the capacity axis (M2b) has one A-grade rate anchor
   (Jaber) but rests critically on one X-grade unmeasured quantity (the A-gap, S5).
-- **Three independent MIP anchors converge:** Vassilakopoulos 42.3/53.8 (M2.3),
-  Jubran 41.3 (P5), and the ATS/ERS norms — all in the 40–55 cmH₂O band the
-  model's capacity grid uses.
+- **Two independent MIP anchors converge:** Vassilakopoulos 42.3/53.8 (M2.3) and
+  Jubran 41.3 (P5) — both in the 40–55 cmH₂O band the model's capacity grid
+  uses. The ATS/ERS statement sets the healthy reference (PImax ≥80 cmH₂O
+  usually excludes important weakness), which anchors the pre-illness C_max0.
 - **Two hypotheses were overturned by the literature**, not by us: H3 (M2b.3,
   M2b.4) and the degradation U-shape (M2b.2 vs M2b.6). Both spec versions are
   retained as switchable modes.

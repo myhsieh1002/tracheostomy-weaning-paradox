@@ -28,7 +28,7 @@
   },
 
   "deadspace": {
-    "VD_VT":      { "value": 0.35, "source": "Physiologic dead-space fraction; normal ~0.3, lung injury 0.5-0.65. Grade C. NOTE: Mohr 2001 (PMID 11706329) measured 0.51+-0.10 in ventilated patients before tracheostomy - i.e. the ICU baseline is already high." },
+    "VD_VT":      { "value": 0.35, "source": "Physiologic dead-space fraction; normal ~0.3, lung injury 0.5-0.65. Grade C. The 0.35 matches the assumed VD/VT of Radford's ventilation standards (Radford 1955, PMID 13233138) - a convention rather than a measurement. NOTE: Mohr 2001 (PMID 11706329) measured 0.51+-0.11 (n=45) in ventilated patients before tracheostomy - i.e. the ICU baseline is already high." },
     "VD_VT_grid": [0.3, 0.45, 0.6],
     "_note": "The series (anatomic + apparatus) dead space comes from wob.deadSpace and is NOT duplicated here. VD_VT sets the TOTAL physiologic fraction; the alveolar component is derived as the excess over the series term."
   },
