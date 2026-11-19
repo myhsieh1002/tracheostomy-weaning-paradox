@@ -14,7 +14,7 @@ function [L, meta] = utilisation(effort, useWhich)
 %
 %       useWhich          L is...                    pair with u_crit =
 %       ---------------   -------------------------  ------------------
-%       'mean'            mean INSPIRATORY P_mus     0.40  Roussos & Macklem 1977
+%       'mean'            mean INSPIRATORY P_mus     0.40  Bellemare & Grassino 1982 TTdi at Ti/Ttot 1/3 (~0.45); Roussos & Macklem 1977 consistent
 %                         => u = Pi/Pimax                  (PMID 893274)
 %       'duty_weighted'   PTP/Ttot                   0.15  Bellemare & Grassino 1982
 %                         => u = tension-time index        (PMID 7174413)
@@ -37,7 +37,7 @@ switch lower(useWhich)
         L = effort.P_mus_mean;
         meta.convention     = "mean inspiratory P_mus";
         meta.u_crit_pairing = 0.40;
-        meta.source         = "Roussos & Macklem 1977, PMID 893274 (Pdicrit, a pure pressure ratio)";
+        meta.source         = "Bellemare & Grassino 1982, PMID 7174413 (TTdi 0.15 at TI/Ttot 1/3); consistent with Roussos & Macklem 1977, PMID 893274";
         meta.note           = "u = L/C_max is Pi/Pimax.";
     case {'duty_weighted', 'dutyweighted'}
         L = effort.P_mus_dutyWeighted;

@@ -24,30 +24,44 @@ parameter choices in the build specs and confirmed a third concern. These
 are recorded first because they change what the model *says*, not just what
 it computes.
 
-### 1.1 `u_crit = 0.15` is an invalid anchoring → **0.4**
+### 1.1 `u_crit = 0.15` was a TTdi value used as a pressure ratio → **0.4**
 
-The Model 2 spec anchors the fatigue threshold to the Bellemare–Grassino
-tension-time index, TTdi ≈ 0.15. That anchoring does not hold, because
+The Model 2 spec set the fatigue threshold to the Bellemare–Grassino
+tension-time index, TTdi ≈ 0.15, and used it directly as `u`. The two are
+not the same quantity:
 
 ```
-TTdi = (Pdi/Pdimax) × (TI/Ttot)        ← carries a duty-cycle factor
-u    =  L/C                             ← the model's utilisation: no duty cycle
+TTdi = (Pdi/Pdimax) × (TI/Ttot)        ← pressure ratio × duty cycle
+u    =  L/C                             ← the model's utilisation: mean inspiratory pressure ratio
 ```
 
-The two are not the same quantity. Using 0.15 for `u` would understate the
-threshold by roughly a factor of three.
+Bellemare & Grassino 1982 showed that there is no unique critical pressure
+ratio — Pdicrit varies with TI/Ttot — but there is a unique critical
+**TTdi ≈ 0.15**. At the model's duty cycle (`IE_ratio` 1:2, TI/Ttot = 1/3)
+that threshold corresponds to a pressure ratio of
 
-The correct anchor is **Roussos & Macklem 1977**, who measured the
-sustainable pressure ratio *directly* as a pure Pdi/Pdimax with no timing
-term — structurally identical to `u = L/C` — and found **Pdicrit ≈ 0.4**.
+```
+u_crit = 0.15 / 0.33 ≈ 0.45
+```
 
-Three independent lines converge:
+which `u_crit = 0.4` (sensitivity range 0.35–0.5) brackets.
+
+**Roussos & Macklem 1977** found Pdicrit ≈ 0.4 with a square-wave target
+held through inspiration, but breathing frequency and TI/Ttot were
+self-selected and not controlled (Bellemare estimates TI/Ttot ≈ 0.5 in
+that protocol). Their 0.4 therefore carries an implicit duty cycle too; it
+is a consistency check, not a duty-cycle-free anchor. *(Versions up to
+2026-11-18 called 0.4 a "pure Pdi/Pdimax with no timing term"; the wording
+was corrected 2026-11-19. The value is unchanged.)*
+
+Consistent lines (not mutually independent — the first two describe the
+same physiology at different duty cycles):
 
 | Route | Value | Grade |
 |---|---|---|
-| Roussos & Macklem 1977 — Pdicrit measured directly | 0.40 | A |
-| Bellemare & Grassino TTdi 0.15 ÷ (TI/Ttot ≈ 0.34) | 0.44 | B |
-| Vassilakopoulos 1998 — Pi/Pimax 0.46 (fail) vs 0.31 (success) | ~0.4 | A |
+| Bellemare & Grassino TTdi 0.15 ÷ (TI/Ttot = 1/3) | 0.45 | B (primary) |
+| Roussos & Macklem 1977 — Pdicrit at a self-selected duty cycle | 0.40 | A |
+| Vassilakopoulos 1998 — Pi/Pimax 0.46 (fail) vs 0.31 (success) | ~0.4 | A (also the calibration target for `s`) |
 
 **Consequence for the code:** `u_crit = 0.4` pairs with `L` defined as the
 **mean inspiratory** P_mus. The model also exposes a duty-weighted `L`,
@@ -290,7 +304,7 @@ in place the model reproduces Davis's ordering and Chadda's WOB ratio to 3%.
 
 | Parameter | Value | Range | Source | Grade |
 |---|---|---|---|---|
-| `u_crit` | **0.4** | 0.35–0.5 | Roussos & Macklem 1977, PMID 893274 — Pdicrit measured as pure Pdi/Pdimax | A |
+| `u_crit` | **0.4** | 0.35–0.5 | Bellemare & Grassino 1982 TTdi 0.15 at TI/Ttot 1/3 (≈0.45); Roussos & Macklem 1977 Pdicrit 0.4 consistent | A/B |
 | `C_max` grid | **[20,30,40,50,60,70]** cmH₂O | — | Vassilakopoulos 1998, PMID 9700110: MIP 42.3 ± 12.7 (fail) / 53.8 ± 15.1 (success) | A |
 | `alpha` | 0.15 /hr | 0.1–0.3 | Laghi 1995, PMID 7592215 — 24 h recovery curve | B / semi-constrained |
 | `beta` | 1.0 /hr | 0.5–2 | **No published value exists** — inferred from a 35% capacity fall over an assumed 15–45 min Tlim | X |

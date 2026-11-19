@@ -11,7 +11,7 @@
     "alpha":  { "value": 0.15, "range": [0.1, 0.3], "source": "Laghi 1995 PMID 7592215 - 24h recovery curve. SEMI-CONSTRAINED: recovery is biphasic, model forces single exponential. See CALIBRATION.md 3." },
     "beta":   { "value": 1.0,  "range": [0.5, 2.0], "source": "TODO-verify - NO published fatigue rate constant exists. Inferred from ~35% capacity fall over an assumed 15-45 min Tlim." },
     "s":      { "value": 25.0, "range": [10, 50],   "source": "TODO-verify - not addressed in literature. Constrained only indirectly by Tlim > 45 min at u ~ u_crit." },
-    "u_crit": { "value": 0.4,  "range": [0.35, 0.5], "source": "Roussos & Macklem 1977 PMID 893274 - Pdicrit ~0.4 measured as PURE Pdi/Pdimax, no duty-cycle term. CORRECTS the spec's 0.15, which was a TTdi value and is NOT the same quantity. See CALIBRATION.md 1.1." },
+    "u_crit": { "value": 0.4,  "range": [0.35, 0.5], "source": "Bellemare & Grassino 1982 PMID 7174413 - the critical tension-time index TTdi = (Pdi/Pdimax)(TI/Ttot) ~0.15 is the unique fatigue threshold; at the model's duty cycle (IE_ratio 1:2, TI/Ttot = 1/3) it corresponds to a mean-pressure ratio 0.15/0.33 ~0.45. Consistent with Roussos & Macklem 1977 PMID 893274 (Pdicrit ~0.4 at a self-selected, uncontrolled duty cycle; Bellemare estimates TI/Ttot ~0.5 there). The spec's 0.15 was a TTdi value used as a pressure ratio - CORRECTED. Corrected wording 2026-11-19 (earlier versions called 0.4 a 'pure' ratio with no duty-cycle term; it implicitly carries one). Value unchanged. See CALIBRATION.md 1.1." },
     "noise_sigma": { "value": 0.02, "range": [0.005, 0.1], "source": "design - M2b Euler-Maruyama only" }
   },
 
@@ -22,7 +22,7 @@
 
   "load_from_model1": {
     "use": "mean",
-    "_use_note": "'mean' = mean INSPIRATORY P_mus, which pairs with u_crit=0.4 (Roussos & Macklem, a pure pressure ratio). 'duty_weighted' reproduces the tension-time index and MUST be paired with u_crit=0.15 (Bellemare & Grassino) instead. 'peak' has NO published threshold and is provided for exploration only. lc.utilisation enforces the pairing.",
+    "_use_note": "'mean' = mean INSPIRATORY P_mus, which pairs with u_crit=0.4 (critical TTdi 0.15 at the model's TI/Ttot of 1/3; Roussos & Macklem's 0.4 is consistent). 'duty_weighted' reproduces the tension-time index and MUST be paired with u_crit=0.15 (Bellemare & Grassino) instead. 'peak' has NO published threshold and is provided for exploration only. lc.utilisation enforces the pairing.",
     "devices": ["ETT_7_5", "TRACH_8_0"]
   },
 
