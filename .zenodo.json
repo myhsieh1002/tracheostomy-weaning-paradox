@@ -3,8 +3,8 @@
   "upload_type": "software",
   "access_right": "open",
   "license": "MIT",
-  "version": "1.0.0",
-  "description": "MATLAB implementation of four coupled low-dimensional models explaining why tracheostomy shortens mechanical ventilation without changing survival: lumped-parameter respiratory mechanics (Model 1), two-compartment CO2 kinetics (Model 1b), a load-capacity saddle-node bifurcation (Model 2), and ventilator-induced diaphragmatic dysfunction capacity dynamics (Model 2b). Fully reproducible via `matlab -batch \"runAll\"`: 121 unit tests, 19 experiments, auto-generated summary documents, and per-parameter evidence grades (docs/CALIBRATION.md). Accompanies the manuscript of the same title.",
+  "version": "1.0.1",
+  "description": "MATLAB implementation of four coupled low-dimensional models explaining why tracheostomy shortens mechanical ventilation without changing survival: lumped-parameter respiratory mechanics (Model 1), two-compartment CO2 kinetics (Model 1b), a load-capacity saddle-node bifurcation (Model 2), and ventilator-induced diaphragmatic dysfunction capacity dynamics (Model 2b). Fully reproducible via `matlab -batch \"runAll\"`: 123 unit tests, 21 experiments, auto-generated summary documents, and per-parameter evidence grades (docs/CALIBRATION.md). Accompanies the manuscript of the same title.",
   "keywords": [
     "tracheostomy",
     "weaning",
@@ -18,7 +18,7 @@
   "creators": [
     {
       "name": "Hsieh, Ming-Yu",
-      "affiliation": "Chung Shan Medical University Hospital, Taichung, Taiwan",
+      "affiliation": "Center of Evidence-Based Medicine, Department of Medical Education, Chung Shan Medical University Hospital, Taichung, Taiwan; School of Medicine, Chung Shan Medical University, Taichung, Taiwan",
       "orcid": "0000-0002-5797-3474"
     }
   ],

@@ -7,11 +7,11 @@ abstract: >-
   lumped-parameter respiratory mechanics (Model 1), two-compartment CO2 kinetics
   (Model 1b), a load–capacity saddle-node bifurcation (Model 2), and
   ventilator-induced diaphragmatic dysfunction capacity dynamics (Model 2b).
-  Fully reproducible (matlab -batch "runAll"): 121 unit tests, 19 experiments,
+  Fully reproducible (matlab -batch "runAll"): 123 unit tests, 21 experiments,
   auto-generated summaries, per-parameter evidence grades.
 type: software
-version: 1.0.0
-date-released: "2026-07-18"
+version: 1.0.1
+date-released: "2026-11-19"
 license: MIT
 repository-code: "https://github.com/myhsieh1002/tracheostomy-weaning-paradox"
 url: "https://doi.org/10.5281/zenodo.21430090"
@@ -36,4 +36,4 @@ authors:
   - family-names: "Hsieh"
     given-names: "Ming-Yu"
     orcid: "https://orcid.org/0000-0002-5797-3474"
-    affiliation: "Chung Shan Medical University Hospital, Taichung, Taiwan"
+    affiliation: "Center of Evidence-Based Medicine, Department of Medical Education, Chung Shan Medical University Hospital, Taichung, Taiwan; School of Medicine, Chung Shan Medical University, Taichung, Taiwan"
